@@ -10,7 +10,9 @@ SITEURL = ''
 PATH = 'content'
 
 # Theme setup
-THEME = 'simple'
+THEME = 'theme' # Pelicanyan
+DIRECT_TEMPLATES = ('index', 'categories', 'authors', 'archives',
+                    'sitemap', 'robots', 'humans')
 
 # Locale information
 DEFAULT_LANG = u'en'
@@ -28,3 +30,9 @@ ARTICLE_URL = 'posts/{date:%Y}/{date:%m}/{date:%d}/{slug}/'
 ARTICLE_SAVE_AS = 'posts/{date:%Y}/{date:%m}/{date:%d}/{slug}/index.html'
 PAGE_URL = 'pages/{slug}/'
 PAGE_SAVE_AS = 'pages/{slug}/index.html'
+
+# Site directives; these happen to have templates in Pelicanyan
+ROBOTS_SAVE_AS = 'robots.txt'
+HUMANS_SAVE_AS = 'humans.txt'
+SITEMAP_SAVE_AS = 'sitemap.xml'
+

@@ -21,3 +21,16 @@ make serve
 ```
 
 The site should then be viewable at http://localhost:8000/.
+
+## Notes
+The necessary CSS files from [Poole](http://getpoole.com/)'s
+[Lanyon](https://github.com/poole/lanyon) theme can be obtained by running the
+following commands in [`theme/static/css`][Poole CSS location]
+```
+wget https://raw.githubusercontent.com/poole/lanyon/master/public/css/lanyon.css
+wget https://raw.githubusercontent.com/poole/lanyon/master/public/css/poole.css
+wget https://raw.githubusercontent.com/poole/lanyon/master/public/css/syntax.css
+```
+
+[Poole CSS location]: theme/static/css
+
