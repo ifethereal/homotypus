@@ -8,14 +8,18 @@ This repository contains the source code for the Homotypus blog.
   [spec file][pip] for details)
   * Pelican 4.2.0
   * Markdown 3.1.1
+* [Sass][sass] (Dart Sass 1.25.0 works)
 
 [conda]: spec/conda.txt
 [pip]: spec/pip.txt
+[sass]: https://sass-lang.com/install
+    "Download page for Sass"
 
 ## Instructions
-Once the conda environment environment is set up and activated, navigate to the
-root of the repository and run
+Once the conda environment is set up and activated, navigate to the root of the
+repository and run
 ```
+sass extra/homotypus.scss theme/static/css/homotypus.css
 make html
 make serve
 ```
@@ -23,14 +27,11 @@ make serve
 The site should then be viewable at http://localhost:8000/.
 
 ## Notes
-The necessary CSS files from [Poole](http://getpoole.com/)'s
-[Lanyon](https://github.com/poole/lanyon) theme can be obtained by running the
-following commands in [`theme/static/css`][Poole CSS location]
-```
-wget https://raw.githubusercontent.com/poole/lanyon/master/public/css/lanyon.css
-wget https://raw.githubusercontent.com/poole/lanyon/master/public/css/poole.css
-wget https://raw.githubusercontent.com/poole/lanyon/master/public/css/syntax.css
-```
+The file [`homotypus.scss`][scss] is heavily based on the themes [Poole][poole]
+and [Lanyon][lanyon] for Jekyll.
 
-[Poole CSS location]: theme/static/css
-
+[scss]: extra/homotypus.scss
+[poole]: https://github.com/poole/poole
+    "The Poole GitHub repository"
+[lanyon]: https://github.com/poole/lanyon
+    "The Lanyon GitHub repository"

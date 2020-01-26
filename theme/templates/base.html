@@ -34,11 +34,9 @@
     {% if TAG_FEED_RSS and tag %}
     <link href="{{ FEED_DOMAIN }}/{{ TAG_FEED_RSS|format(tag.slug) }}" type="application/rss+xml" rel="alternate" title="{{ SITENAME }} Tags RSS Feed" />
     {% endif %}
-    <link rel="stylesheet" href="{{ SITEURL }}/theme/css/poole.css"/>
     <link rel="stylesheet" href="{{ SITEURL }}/theme/css/syntax.css"/>
-    <link rel="stylesheet" href="{{ SITEURL }}/theme/css/lanyon.css"/>
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700%7CPT+Sans:400">
     <link rel="stylesheet" href="{{ SITEURL }}/theme/css/styles.css"/>
+    <link rel="stylesheet" href="{{ SITEURL }}/theme/css/homotypus.css"/>
     {% endblock head %}
   </head>
 
