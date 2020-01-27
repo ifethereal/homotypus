@@ -19,12 +19,10 @@ This repository contains the source code for the Homotypus blog.
 Once the conda environment is set up and activated, navigate to the root of the
 repository and run
 ```
-sass extra/homotypus.scss theme/static/css/homotypus.css
-make html
-make serve
+make fresh
 ```
 
-The site should then be viewable at http://localhost:8000/.
+The site will open up at http://localhost:8000/.
 
 ## Notes
 The file [`homotypus.scss`][scss] is heavily based on the themes [Poole][poole]
