@@ -93,7 +93,9 @@ $root-line-height: 1.5;
 $large-breakpoint: 38em;
 $large-font-size: 20px;
 
-$code-font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !default;
+$code-font-family:
+  SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+  monospace !default;
 
 /// Mixin to prefix a property
 /// @author Hugo Giraudel
@@ -114,10 +116,12 @@ $code-font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "
 /// @param {Keyword | Angle} $value - Value to convert
 /// @require {function} is-direction
 /// @require {function} convert-angle
-/// @throw Cannot convert `#{$value}` to legacy syntax because it doesn't seem to be a direction.;
+/// @throw Cannot convert `#{$value}` to legacy syntax because it doesn't seem
+/// to be a direction.;
 @function legacy-direction($value) {
   @if is-direction($value) == false {
-    @error "Cannot convert `#{$value}` to legacy syntax because it doesn't seem to be a direction.";
+    @error "Cannot convert `#{$value}` to legacy syntax because it doesn't seem"
+    "to be a direction.";
   }
 
   $conversion-map: (
@@ -157,7 +161,8 @@ $code-font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "
   }
 
   background: nth(nth($color-stops, 1), 1);
-  background: -webkit-linear-gradient(legacy-direction($direction), $color-stops);
+  background:
+    -webkit-linear-gradient(legacy-direction($direction), $color-stops);
   background: linear-gradient($direction, $color-stops);
 }
 
