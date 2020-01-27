@@ -1,0 +1,936 @@
+/*     __  __                      __
+ *    / / / /___  ____ ___  ____  / /___  ______  __  _______
+ *   / /_/ / __ \/ __ `__ \/ __ \/ __/ / / / __ \/ / / / ___/
+ *  / __  / /_/ / / / / / / /_/ / /_/ /_/ / /_/ / /_/ (__  )
+ * /_/ /_/\____/_/ /_/ /_/\____/\__/\__, / .___/\__,_/____/
+ *                                 /____/_/
+ *
+ * Heavily based on
+ *   Poole (https://github.com/poole/poole)
+ *   Lanyon (https://github.com/poole/lanyon)
+ *
+ * Released under MIT license.
+ */
+
+/* _sass/_palette.scss */
+
+@use "sass:color";
+
+$red: #ac4142;
+$orange: #d28445;
+$yellow: #f4bf75;
+$green: #90a959;
+$cyan: #75b5aa;
+$blue: #268bd2;
+$brown: #8f5536;
+
+$fg-main: #515151;
+$fg-accent1: #505050;
+$fg-accent2: #313131;
+$fg-accent3: #303030;
+$fg-accent4: #202020;
+
+$fg-mute01: #555;
+$fg-mute02: #717171;
+$fg-mute03: #7a7a7a;
+$fg-mute04: #999;
+$fg-mute05: #9a9a9a;
+$fg-mute06: #c0c0c0;
+$fg-mute07: #ccc;
+$fg-mute08: #e5e5e5;
+$fg-mute09: #eee;
+$fg-mute10: #f5f5f5;
+$fg-mute11: #f9f9f9;
+$bg-main: #fff;
+
+$hue1-main: $blue;
+
+$hue2-main: #bf616a;
+
+
+:root {
+  --fg-main: #{$fg-main};
+  --bg-main: #{$bg-main};
+  --fg-accent1: #{$fg-accent1};
+  --fg-accent2: #{$fg-accent2};
+  --fg-accent3: #{$fg-accent3};
+  --fg-mute01: #{$fg-mute01};
+  --fg-mute02: #{$fg-mute02};
+  --fg-mute03: #{$fg-mute03};
+  --fg-mute04: #{$fg-mute04};
+  --fg-mute05: #{$fg-mute05};
+  --fg-mute06: #{$fg-mute06};
+  --fg-mute07: #{$fg-mute07};
+  --fg-mute08: #{$fg-mute08};
+  --fg-mute09: #{$fg-mute09};
+  --fg-mute10: #{$fg-mute10};
+  --fg-mute11: #{$fg-mute11};
+  --hue1-main: #{$hue1-main};
+  --code-bg: #{$fg-mute11};
+  --code-fg: #{$hue2-main};
+  --sidebar-fg: #{$bg-main};
+  --sidebar-fg-mute1: #{rgba($bg-main, .6)};
+  --sidebar-fg-mute2: #{rgba($bg-main, .1)};
+  --sidebar-bg: #{$fg-accent4};
+}
+
+
+/* _sass/_variables.scss */
+
+$root-font-family:
+  -apple-system,      /* iOS Safari, macOS Safari, macOS Firefox */
+  BlinkMacSystemFont, /* macOS Chrome */
+  "Segoe UI",         /* Windows */
+  Roboto,             /* Android, Chrome OS */
+  Oxygen-Sans,        /* KDE */
+  Ubuntu,             /* Ubuntu */
+  Cantarell,          /* GNOME */
+  "Helvetica Neue",   /* macOS versions < 10.11 */
+  sans-serif;
+$root-font-size: 16px;
+$root-line-height: 1.5;
+
+$large-breakpoint: 38em;
+$large-font-size: 20px;
+
+$code-font-family:
+  SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+  monospace !default;
+
+/// Mixin to prefix a property
+/// @author Hugo Giraudel
+/// @param {String} $property - Property name
+/// @param {*} $value - Property value
+/// @param {List} $prefixes (()) - List of prefixes to print
+@mixin prefix($property, $value, $prefixes: ()) {
+  @each $prefix in $prefixes {
+    #{'-' + $prefix + '-' + $property}: $value;
+  }
+ 
+  // Output standard non-prefixed declaration
+  #{$property}: $value;
+}
+
+/// Convert a direction to legacy syntax
+/// @author Hugo Giraudel
+/// @param {Keyword | Angle} $value - Value to convert
+/// @require {function} is-direction
+/// @require {function} convert-angle
+/// @throw Cannot convert `#{$value}` to legacy syntax because it doesn't seem
+/// to be a direction.;
+@function legacy-direction($value) {
+  @if is-direction($value) == false {
+    @error "Cannot convert `#{$value}` to legacy syntax because it doesn't seem"
+    "to be a direction.";
+  }
+
+  $conversion-map: (
+    to top          : bottom,
+    to top right    : bottom left,
+    to right top    : left bottom,
+    to right        : left,
+    to bottom right : top left,
+    to right bottom : left top,
+    to bottom       : top,
+    to bottom left  : top right,
+    to left bottom  : right top,
+    to left         : right,
+    to left top     : right bottom,
+    to top left     : bottom right
+  );
+
+  @if map-has-key($conversion-map, $value) {
+    @return map-get($conversion-map, $value);
+  }
+
+  @return 90deg - $value;
+}
+
+/// Mixin printing a linear-gradient
+/// as well as a plain color fallback
+/// and the `-webkit-` prefixed declaration
+/// @access public
+/// @author Hugo Giraudel
+/// @param {Keyword | Angle} $direction - Linear gradient direction
+/// @param {Arglist} $color-stops - List of color-stops composing the gradient
+@mixin linear-gradient($direction, $color-stops...) {
+  // Direction has been omitted and happens to be a color-stop
+  @if is-direction($direction) == false {
+    $color-stops: $direction, $color-stops;
+    $direction: 180deg;
+  }
+
+  background: nth(nth($color-stops, 1), 1);
+  background:
+    -webkit-linear-gradient(legacy-direction($direction), $color-stops);
+  background: linear-gradient($direction, $color-stops);
+}
+
+
+/* _sass/_base.scss */
+
+/*
+ * Body resets
+ *
+ * Update the foundational and global aspects of the page.
+ */
+
+* {
+  @include prefix(box-sizing, border-box, webkit moz);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Prevent scroll on narrow devices */
+}
+
+html {
+  font-family: $root-font-family;
+  font-size: $root-font-size;
+  line-height: $root-line-height;
+
+  @media (min-width: $large-breakpoint) {
+    font-size: $large-font-size;
+  }
+}
+
+body {
+  color: var(--fg-main);
+  background-color: var(--bg-main);
+  -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+}
+
+/* No `:visited` state is required by default (browsers will use `a`) */
+a {
+  color: var(--hue1-main);
+  text-decoration: none;
+
+  /* `:focus` is linked to `:hover` for basic accessibility */
+  &:hover,
+  &:focus {
+    text-decoration: underline;
+  }
+
+  strong {
+    color: inherit;
+  }
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  margin: 0 0 1rem;
+  border-radius: 5px;
+}
+
+table {
+  margin-bottom: 1rem;
+  width: 100%;
+  font-size: 85%;
+  border: 1px solid var(--fg-mute08);
+  border-collapse: collapse;
+}
+
+td,
+th {
+  padding: .25rem .5rem;
+  border: 1px solid var(--fg-mute08);
+}
+
+th {
+  text-align: left;
+}
+
+tbody tr:nth-child(odd) td,
+tbody tr:nth-child(odd) th {
+  background-color: var(--fg-mute11);
+}
+
+
+/* _sass/_type.scss */
+
+/*
+ * Typography
+ * 
+ * Headings, body text, lists, and other misc typographic elements.
+ */
+
+h1, h2, h3, h4, h5, h6 {
+  margin-bottom: .5rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--fg-accent2);
+  text-rendering: optimizeLegibility;
+  letter-spacing: -.025rem;
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  margin-top: 1rem;
+  font-size: 1.5rem;
+}
+
+h3 {
+  margin-top: 1.5rem;
+  font-size: 1.25rem;
+}
+
+h4, h5, h6 {
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+ul, ol, dl {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+dt {
+  font-weight: bold;
+}
+
+dd {
+  margin-bottom: .5rem;
+}
+
+hr {
+  position: relative;
+  margin: 1.5rem 0;
+  border: 0;
+  border-top: 1px solid var(--fg-mute08);
+  border-bottom: 1px solid var(--bg-main);
+}
+
+abbr {
+  font-size: 85%;
+  font-weight: bold;
+  color: var(--fg-mute01);
+  text-transform: uppercase;
+
+  &[title] {
+    cursor: help;
+    border-bottom: 1px dotted var(--fg-mute08);
+  }
+}
+
+blockquote {
+  padding: .5rem 1rem;
+  margin: .8rem 0;
+  color: var(--fg-mute03);
+  border-left: .25rem solid var(--fg-mute08);
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+  @media (min-width: 30em) {
+    padding-right: 5rem;
+    padding-left: 1.25rem;
+  }
+}
+
+figure {
+  margin: 0;
+}
+
+/*
+ * Markdown footnotes
+ *
+ * See the example content post for an example.
+ */
+
+/* Footnote number within body text */
+a[href^="#fn:"],
+/* Back to footnote link */
+a[href^="#fnref:"] {
+  display: inline-block;
+  margin-left: .1rem;
+  font-weight: bold;
+}
+
+/* List of footnotes */
+.footnotes {
+  margin-top: 2rem;
+  font-size: 85%;
+}
+
+/*
+ * Custom type
+ *
+ * Extend paragraphs with `.lead` for larger introductory text.
+ */
+
+.lead {
+  font-size: 1.25rem;
+  font-weight: 300;
+}
+
+
+/* _sass/_code.scss */
+
+/*
+ * Code
+ * 
+ * Inline and block-level code snippets. Includes tweaks to syntax highlighted
+ * snippets from Pygments/Rouge and Gist embeds.
+ */
+
+code,
+pre {
+  font-family: $code-font-family;
+  background-color: var(--code-bg);
+}
+
+code {
+  padding: .25em .5em;
+  font-size: 85%;
+  color: var(--code-fg);
+  border-radius: 3px;
+}
+
+pre {
+  display: block;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  overflow: auto;
+  font-size: .8rem;
+  line-height: 1.4;
+  white-space: pre;
+  white-space: pre-wrap;
+  word-break: break-all;
+  word-wrap: break-word;
+  code {
+    padding: 0;
+    font-size: 100%;
+    color: inherit;
+    background-color: transparent;
+  }
+}
+
+.highlight {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: var(--code-bg);
+  border-radius: .25rem;
+
+  pre {
+    margin-bottom: 0;
+  }
+
+  /* Triple backticks (code fencing) doubles the .highlight elements */
+  .highlight {
+    padding: 0;
+  }
+}
+
+.rouge-table {
+  margin-bottom: 0;
+  font-size: 100%;
+
+  &,
+  td,
+  th {
+    border: 0;
+  }
+
+  .gutter {
+    color: #{rgba(#000, .25)};
+    vertical-align: top;
+    /* Make sure numbers aren't selectable */
+    @include prefix(user-select, none, webkit ms);
+  }
+}
+
+
+/* _sass/_layout.scss */
+
+/*
+ * Layout
+ *
+ * Styles for managing the structural hierarchy of the site.
+ */
+
+.container {
+  max-width: 28rem;
+  padding-left:  1rem;
+  padding-right: 1rem;
+  margin-left:  auto;
+  margin-right: auto;
+  @media (min-width: 38em) {
+    max-width: 32rem;
+  }
+  @media (min-width: 56em) {
+    max-width: 38rem;
+  }
+}
+
+footer {
+  margin-bottom: 2rem;
+}
+
+
+/* _sass/_masthead.scss */
+
+/*
+ * Masthead
+ *
+ * Super small header above the content for site name and short description.
+ */
+
+.masthead {
+  padding-top:    1rem;
+  padding-bottom: 1rem;
+  margin-bottom: 3rem;
+  border-bottom: 1px solid var(--fg-mute09);
+}
+
+.masthead-title {
+  margin-top: 0;
+  margin-bottom: 0;
+  color: var(--fg-accent1);
+
+  a {
+    color: inherit;
+  }
+
+  small {
+    font-size: 75%;
+    font-weight: 400;
+    color: var(--fg-mute06);
+    letter-spacing: 0;
+  }
+
+  @media (max-width: 48em) {
+    text-align: center;
+    small {
+      display: none;
+    }
+  }
+}
+
+
+/* _sass/_posts.scss */
+
+/*
+ * Posts and pages
+ *
+ * Each post is wrapped in `.post` and is used on default and post layouts. Each
+ * page is wrapped in `.page` and is only used on the page layout.
+ */
+
+.page,
+.post {
+  margin-bottom: 4em;
+
+  li + li {
+    margin-top: .25rem;
+  }
+}
+
+/* Blog post or page title */
+.page-title,
+.post-title,
+.post-title a {
+  color: var(--fg-accent3);
+}
+.page-title,
+.post-title {
+  margin-top: 0;
+}
+
+/* Meta data line below post title */
+.post-date {
+  display: block;
+  margin-top: -.5rem;
+  margin-bottom: 1rem;
+  color: var(--fg-mute05);
+}
+
+
+/* Related posts */
+.related {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
+  border-top: 1px solid var(--fg-mute09);
+  border-bottom: 1px solid var(--fg-mute09);
+}
+
+.related-posts {
+  padding-left: 0;
+  list-style: none;
+
+  h3 {
+    margin-top: 0;
+  }
+
+  li {
+    small {
+      font-size: 75%;
+      color: var(--fg-mute04);
+    }
+
+    a:hover {
+      color: var(--hue1-main);
+      text-decoration: none;
+
+      small {
+        color: inherit;
+      }
+    }
+  }
+}
+
+
+/* _sass/_pagination.scss */
+
+/*
+ * Pagination
+ *
+ * Super lightweight (HTML-wise) blog pagination. `span`s are provide for when
+ * there are no more previous or next posts to show.
+ */
+
+.pagination {
+  overflow: hidden; /* clearfix */
+  margin: {
+    left: -1rem;
+    right: -1rem;
+  }
+  color: var(--fg-mute07);
+  text-align: center;
+}
+
+/* Pagination items can be `span`s or `a`s */
+.pagination-item {
+  display: block;
+  padding: 1rem;
+  border: 1px solid var(--fg-mute09);
+
+  &:first-child {
+    margin-bottom: -1px;
+  }
+}
+
+/* Only provide a hover state for linked pagination items */
+a.pagination-item:hover {
+  background-color: var(--fg-mute10);
+}
+
+@media (min-width: 30em) {
+  .pagination {
+    margin: 3rem 0;
+  }
+
+  .pagination-item {
+    float: left;
+    width: 50%;
+
+    &:first-child {
+      margin-bottom: 0;
+      border-top-left-radius:    4px;
+      border-bottom-left-radius: 4px;
+    }
+    &:last-child {
+      margin-left: -1px;
+      border-top-right-radius:    4px;
+      border-bottom-right-radius: 4px;
+    }
+  }
+}
+
+
+/* _sass/_message.scss */
+
+/*
+ * Messages
+ *
+ * Show alert messages to users. You may add it to single elements like a `<p>`,
+ * or to a parent if there are multiple elements to show.
+ */
+
+.message {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  color: var(--fg-mute02);
+  background-color: var(--fg-mute11);
+}
+
+
+/* _sass/_sidebar.scss */
+
+/*
+ * Sidebar
+ *
+ * The sidebar is the drawer, the item we are toggling with our handy hamburger
+ * button in the corner of the page.
+ *
+ * This particular sidebar implementation was inspired by Chris Coyier's
+ * "Offcanvas Menu with CSS Target" article, and the checkbox variation from the
+ * comments by a reader. It modifies both implementations to continue using the
+ * checkbox (no change in URL means no polluted browser history), but this uses
+ * `position` for the menu to avoid some potential content reflow issues.
+ * 
+ * Source: http://css-tricks.com/off-canvas-menu-with-css-target/#comment-207504
+ */
+
+%sidebar-nav-item-activate {
+  text-decoration: none;
+  background-color: var(--sidebar-fg-mute1);
+  border-color: transparent;
+}
+
+%sidebar-toggle-fill-off-solid {
+  color: var(--fg-accent1);
+  background-color: var(--bg-main);
+}
+
+%sidebar-toggle-fill-on-solid {
+  color: var(--bg-main);
+  background-color: var(--fg-mute01);
+}
+
+%sidebar-toggle-fill-off-pattern {
+  @include linear-gradient(
+    to bottom,
+    var(--fg-mute01), var(--fg-mute01) 20%,
+    var(--sidebar-fg) 20%, var(--sidebar-fg) 40%,
+    var(--fg-mute01) 40%, var(--fg-mute01) 60%,
+    var(--sidebar-fg) 60%, var(--sidebar-fg) 80%,
+    var(--fg-mute01) 80%, var(--fg-mute01) 100%
+  );
+}
+
+%sidebar-toggle-fill-on-pattern {
+  @include linear-gradient(
+    to bottom,
+    var(--sidebar-fg), var(--sidebar-fg) 20%,
+    var(--fg-mute01) 20%, var(--fg-mute01) 40%,
+    var(--sidebar-fg) 40%, var(--sidebar-fg) 60%,
+    var(--fg-mute01) 60%, var(--fg-mute01) 80%,
+    var(--sidebar-fg) 80%, var(--sidebar-fg) 100%
+  );
+}
+
+/* Style and "hide" the sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: -14rem;
+  width: 14rem;
+  visibility: hidden;
+  overflow-y: auto;
+  font-size: .875rem; /* 15px */
+  color: var(--sidebar-fg-mute1);
+  background-color: var(--sidebar-bg);
+  @include prefix(transition, all .3s ease-in-out, webkit);
+  @include prefix(backface-visibility, hidden, webkit ms);
+
+  @media (min-width: 30em) {
+    font-size: .75rem; /* 14px */
+  }
+
+  /* Sidebar content */
+  a {
+    font-weight: normal;
+    color: var(--sidebar-fg);
+  }
+  &-item {
+    padding: 1rem;
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    @media (min-width: 48em) {
+      padding: 1.5rem;
+    }
+  }
+
+  /* Sidebar nav */
+  &-nav {
+    border-bottom: 1px solid var(--sidebar-fg-mute2);
+    &-item {
+      display: block;
+      padding: .5rem 1rem;
+      border-top: 1px solid var(--sidebar-fg-mute2);
+
+      @media (min-width: 48em) {
+        padding-left:  1.5rem;
+        padding-right: 1.5rem;
+      }
+
+      &.active {
+        @extend %sidebar-nav-item-activate;
+      }
+    }
+  }
+
+  /* Hide the sidebar checkbox that we toggle with `.sidebar-toggle` */
+  &-checkbox {
+    position: absolute;
+    opacity: 0;
+    @include prefix(user-select, none, webkit moz);
+  }
+
+  /* Style the `label` that we use to target the `.sidebar-checkbox` */
+  &-toggle {
+    position: absolute;
+    top:  .8rem;
+    left: 1rem;
+    display: block;
+    padding: .25rem .75rem;
+    @extend %sidebar-toggle-fill-off-solid;
+    border-radius: .25rem;
+    cursor: pointer;
+    &:before {
+      @extend %sidebar-toggle-fill-off-pattern;
+      display: inline-block;
+      width: 1rem;
+      height: .75rem;
+      content: "";
+    }
+    &:active {
+      @extend %sidebar-toggle-fill-on-solid;
+      &:before {
+        @extend %sidebar-toggle-fill-on-pattern;
+      }
+    }
+
+    @media (min-width: 30.1em) {
+      position: fixed;
+    }
+    
+    @media print {
+      display: none;
+    }
+  }
+}
+
+a.sidebar-nav-item {
+  &:hover, &:focus {
+    @extend %sidebar-nav-item-activate;
+  }
+}
+
+/* Style the `label` that we use to target the `.sidebar-checkbox`
+ * depending on the state of the `.sidebar-checkbox`
+ */
+#sidebar-checkbox:focus, #sidebar-checkbox:checked {
+  ~ .sidebar-toggle {
+    @extend %sidebar-toggle-fill-on-solid;
+    &:before {
+      @extend %sidebar-toggle-fill-on-pattern;
+    }
+  }
+}
+
+
+/*
+ * Wrapper
+ *
+ * The wrapper is used to position site content when the sidebar is toggled. We
+ * use an outter wrap to position the sidebar without interferring with the
+ * regular page content.
+ */
+
+.wrap {
+  position: relative;
+  width: 100%;
+}
+
+
+/*
+ * Slide effect
+ *
+ * Handle the sliding effects of the sidebar and content in one spot, seperate
+ * from the default styles.
+ *
+ * As an a heads up, we don't use `transform: translate3d()` here because when
+ * mixed with `position: fixed;` for the sidebar toggle, it creates a new
+ * containing block. Put simply, the fixed sidebar toggle behaves like
+ * `position: absolute;` when transformed.
+ *
+ * Read more about it at http://meyerweb.com/eric/thoughts/2011/09/12/.
+ */
+
+.wrap,
+.sidebar-toggle {
+  @include prefix(backface-visibility, hidden, webkit ms);
+  -webkit-transition: -webkit-transform .3s ease-in-out;
+          transition: transform .3s ease-in-out;
+}
+
+#sidebar-checkbox:checked {
+  + .sidebar {
+    z-index: 10;
+    visibility: visible;
+  }
+  ~ {
+    .sidebar, .wrap, .sidebar-toggle {
+      @include prefix(transform, translateX(14rem), webkit ms);
+    }
+  }
+}
+
+
+/*
+ * Reverse layout
+ *
+ * Flip the orientation of the page by placing the `.sidebar` and sidebar toggle
+ * on the right side.
+ */
+
+.layout-reverse {
+  .sidebar {
+    left: auto;
+    right: -14rem;
+  }
+  .sidebar-toggle {
+    left: auto;
+    right: 1rem;
+  }
+  #sidebar-checkbox:checked ~ {
+    .sidebar, .wrap, .sidebar-toggle {
+      @include prefix(transform, translateX(-14rem), webkit ms);
+    }
+  }
+}
+
+
+/*
+ * Overlay sidebar
+ *
+ * Make the sidebar content overlay the viewport content instead of pushing it
+ * aside when toggled.
+ */
+
+.sidebar-overlay {
+  #sidebar-checkbox:checked ~ {
+    .wrap {
+      @include prefix(transform, translateX(0), webkit ms);
+    }
+    .sidebar-toggle {
+      box-shadow: 0 0 0 .25rem var(--sidebar-fg);
+    }
+    .sidebar {
+      box-shadow: .25rem 0 .5rem #{rgba(#000, .1)};
+    }
+  }
+}
+
+/* Only one tweak for a reverse layout */
+.layout-reverse.sidebar-overlay #sidebar-checkbox:checked ~ .sidebar {
+  box-shadow: -.25rem 0 .5rem #{rgba(#000, .1)};
+}

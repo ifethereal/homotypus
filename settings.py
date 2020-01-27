@@ -17,6 +17,7 @@ DIRECT_TEMPLATES = ('index', 'categories', 'authors', 'archives',
 # Locale information
 DEFAULT_LANG = u'en'
 TIMEZONE = 'Australia/Sydney'
+DEFAULT_DATE_FORMAT = '%a, %-d %b %Y'
 
 # Disable feed generation for now
 FEED_ALL_ATOM = None
@@ -35,4 +36,3 @@ PAGE_SAVE_AS = 'pages/{slug}/index.html'
 ROBOTS_SAVE_AS = 'robots.txt'
 HUMANS_SAVE_AS = 'humans.txt'
 SITEMAP_SAVE_AS = 'sitemap.xml'
-
