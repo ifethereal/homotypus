@@ -2,14 +2,16 @@
 This repository contains the source code for the Homotypus blog.
 
 ## Setup
-* Miniconda 4.8.1 w/ Python 2.7[.17] (see the [spec file][conda] for
-  environment)
+* [Miniconda][miniconda] 4.8.1 w/ Python 2.7[.17] (see the [spec file][conda]
+  for environment)
 * Python packages (`pip` will take care of dependencies; see the
   [spec file][pip] for details)
   * Pelican 4.2.0
   * Markdown 3.1.1
 * [Sass][sass] (Dart Sass 1.25.0 works)
 
+[miniconda]: https://docs.conda.io/en/latest/miniconda.html
+    "Download page for Miniconda"
 [conda]: spec/conda.txt
 [pip]: spec/pip.txt
 [sass]: https://sass-lang.com/install
