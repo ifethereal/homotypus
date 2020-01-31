@@ -69,8 +69,8 @@ $hue2-main: #bf616a;
   --code-bg: #{$fg-mute11};
   --code-fg: #{$hue2-main};
   --sidebar-fg: #{$bg-main};
-  --sidebar-fg-mute1: #{rgba($bg-main, .6)};
-  --sidebar-fg-mute2: #{rgba($bg-main, .1)};
+  --sidebar-fg-mute1: #{rgba($bg-main, 0.6)};
+  --sidebar-fg-mute2: #{rgba($bg-main, 0.1)};
   --sidebar-bg: #{$fg-accent4};
 }
 
@@ -236,7 +236,7 @@ table {
 
 td,
 th {
-  padding: .25rem .5rem;
+  padding: 0.25rem 0.5rem;
   border: 1px solid var(--fg-mute08);
 }
 
@@ -259,12 +259,12 @@ tbody tr:nth-child(odd) th {
  */
 
 h1, h2, h3, h4, h5, h6 {
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
   font-weight: 600;
   line-height: 1.25;
   color: var(--fg-accent2);
   text-rendering: optimizeLegibility;
-  letter-spacing: -.025rem;
+  letter-spacing: -0.025rem;
 }
 
 h1 {
@@ -301,7 +301,7 @@ dt {
 }
 
 dd {
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }
 
 hr {
@@ -325,10 +325,10 @@ abbr {
 }
 
 blockquote {
-  padding: .5rem 1rem;
-  margin: .8rem 0;
+  padding: 0.5rem 1rem;
+  margin: 0.8rem 0;
   color: var(--fg-mute03);
-  border-left: .25rem solid var(--fg-mute08);
+  border-left: 0.25rem solid var(--fg-mute08);
 
   p:last-child {
     margin-bottom: 0;
@@ -355,7 +355,7 @@ a[href^="#fn:"],
 /* Back to footnote link */
 a[href^="#fnref:"] {
   display: inline-block;
-  margin-left: .1rem;
+  margin-left: 0.1rem;
   font-weight: bold;
 }
 
@@ -393,7 +393,7 @@ pre {
 }
 
 code {
-  padding: .25em .5em;
+  padding: 0.25em 0.5em;
   font-size: 85%;
   color: var(--code-fg);
   border-radius: 3px;
@@ -404,7 +404,7 @@ pre {
   margin-top: 0;
   margin-bottom: 1rem;
   overflow: auto;
-  font-size: .8rem;
+  font-size: 0.8rem;
   line-height: 1.4;
   white-space: pre;
   white-space: pre-wrap;
@@ -422,7 +422,7 @@ pre {
   padding: 1rem;
   margin-bottom: 1rem;
   background-color: var(--code-bg);
-  border-radius: .25rem;
+  border-radius: 0.25rem;
 
   pre {
     margin-bottom: 0;
@@ -445,7 +445,7 @@ pre {
   }
 
   .gutter {
-    color: #{rgba(#000, .25)};
+    color: #{rgba(#000, 0.25)};
     vertical-align: top;
     /* Make sure numbers aren't selectable */
     @include prefix(user-select, none, webkit ms);
@@ -534,7 +534,7 @@ footer {
   margin-bottom: 4em;
 
   li + li {
-    margin-top: .25rem;
+    margin-top: 0.25rem;
   }
 }
 
@@ -552,7 +552,7 @@ footer {
 /* Meta data line below post title */
 .post-date {
   display: block;
-  margin-top: -.5rem;
+  margin-top: -0.5rem;
   margin-bottom: 1rem;
   color: var(--fg-mute05);
 }
@@ -732,14 +732,14 @@ a.pagination-item:hover {
   width: 14rem;
   visibility: hidden;
   overflow-y: auto;
-  font-size: .875rem; /* 15px */
+  font-size: 0.875rem; /* 15px */
   color: var(--sidebar-fg-mute1);
   background-color: var(--sidebar-bg);
-  @include prefix(transition, all .3s ease-in-out, webkit);
+  @include prefix(transition, all 0.3s ease-in-out, webkit);
   @include prefix(backface-visibility, hidden, webkit ms);
 
   @media (min-width: 30em) {
-    font-size: .75rem; /* 14px */
+    font-size: 0.75rem; /* 14px */
   }
 
   /* Sidebar content */
@@ -763,7 +763,7 @@ a.pagination-item:hover {
     border-bottom: 1px solid var(--sidebar-fg-mute2);
     &-item {
       display: block;
-      padding: .5rem 1rem;
+      padding: 0.5rem 1rem;
       border-top: 1px solid var(--sidebar-fg-mute2);
 
       @media (min-width: 48em) {
@@ -787,18 +787,18 @@ a.pagination-item:hover {
   /* Style the `label` that we use to target the `.sidebar-checkbox` */
   &-toggle {
     position: absolute;
-    top:  .8rem;
+    top:  0.8rem;
     left: 1rem;
     display: block;
-    padding: .25rem .75rem;
+    padding: 0.25rem 0.75rem;
     @extend %sidebar-toggle-fill-off-solid;
-    border-radius: .25rem;
+    border-radius: 0.25rem;
     cursor: pointer;
     &:before {
       @extend %sidebar-toggle-fill-off-pattern;
       display: inline-block;
       width: 1rem;
-      height: .75rem;
+      height: 0.75rem;
       content: "";
     }
     &:active {
@@ -870,8 +870,8 @@ a.sidebar-nav-item {
 .wrap,
 .sidebar-toggle {
   @include prefix(backface-visibility, hidden, webkit ms);
-  -webkit-transition: -webkit-transform .3s ease-in-out;
-          transition: transform .3s ease-in-out;
+  -webkit-transition: -webkit-transform 0.3s ease-in-out;
+          transition: transform 0.3s ease-in-out;
 }
 
 #sidebar-checkbox:checked {
@@ -924,15 +924,15 @@ a.sidebar-nav-item {
       @include prefix(transform, translateX(0), webkit ms);
     }
     .sidebar-toggle {
-      box-shadow: 0 0 0 .25rem var(--sidebar-fg);
+      box-shadow: 0 0 0 0.25rem var(--sidebar-fg);
     }
     .sidebar {
-      box-shadow: .25rem 0 .5rem #{rgba(#000, .1)};
+      box-shadow: 0.25rem 0 0.5rem #{rgba(#000, 0.1)};
     }
   }
 }
 
 /* Only one tweak for a reverse layout */
 .layout-reverse.sidebar-overlay #sidebar-checkbox:checked ~ .sidebar {
-  box-shadow: -.25rem 0 .5rem #{rgba(#000, .1)};
+  box-shadow: -0.25rem 0 0.5rem #{rgba(#000, 0.1)};
 }
