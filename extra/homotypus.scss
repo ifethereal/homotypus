@@ -103,7 +103,12 @@ $width-trigger-tier3: 56em;
   --bquote-padding-left: 1rem;
   --bquote-padding-right: 1rem;
 
+  @media (min-width: $width-trigger-tier2 - 2.5em) {
+    --sbar-indicator-pos: fixed;
+  }
+
   @media (min-width: $width-trigger-tier2) {
+    --sbar-indicator-pos: absolute;
     --main-font-size: 20px;
     --content-width: 32rem;
     --bquote-padding-left: 1.25rem;
