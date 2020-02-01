@@ -651,7 +651,7 @@ a.pagination-item:hover {
   background-color: var(--fg-mute10);
 }
 
-@media (min-width: 30em) {
+@media (min-width: $width-trigger-tier2) {
   .pagination {
     margin: 3rem 0;
   }
