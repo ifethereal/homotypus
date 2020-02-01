@@ -69,8 +69,8 @@ $hue2-main: #bf616a;
   --code-bg: #{$fg-mute11};
   --code-fg: #{$hue2-main};
   --sidebar-fg: #{$bg-main};
-  --sidebar-fg-mute1: #{rgba($bg-main, .6)};
-  --sidebar-fg-mute2: #{rgba($bg-main, .1)};
+  --sidebar-fg-mute1: #{rgba($bg-main, 0.6)};
+  --sidebar-fg-mute2: #{rgba($bg-main, 0.1)};
   --sidebar-bg: #{$fg-accent4};
 }
 
@@ -87,11 +87,44 @@ $root-font-family:
   Cantarell,          /* GNOME */
   "Helvetica Neue",   /* macOS versions < 10.11 */
   sans-serif;
-$root-font-size: 16px;
-$root-line-height: 1.5;
 
-$large-breakpoint: 38em;
-$large-font-size: 20px;
+$width-trigger-tier2: 38em;
+$width-trigger-tier3: 56em;
+
+:root {
+  --main-font-size: 16px;
+  --main-line-height: 1.5;
+  --content-width: 28rem;
+  --sbar-indicator-pos: absolute;
+  --sbar-item-pad: 1rem;
+  --sbar-nav-item-pad-vertical: 0.5rem;
+  --sbar-nav-item-pad-horizontal: 1rem;
+
+  --bquote-padding-left: 1rem;
+  --bquote-padding-right: 1rem;
+
+  @media (min-width: $width-trigger-tier2 - 2.5em) {
+    --sbar-indicator-pos: fixed;
+  }
+
+  @media (min-width: $width-trigger-tier2) {
+    --sbar-indicator-pos: absolute;
+    --main-font-size: 20px;
+    --content-width: 32rem;
+    --bquote-padding-left: 1.25rem;
+    --bquote-padding-right: 5rem;
+  }
+
+  @media (min-width: $width-trigger-tier2 + 10em) {
+    --sbar-indicator-pos: fixed;
+    --sbar-item-pad: 1.5rem;
+    --sbar-nav-item-pad-horizontal: 1.5rem;
+  }
+
+  @media (min-width: $width-trigger-tier3) {
+    --content-width: 38rem;
+  }
+}
 
 $code-font-family:
   SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
@@ -188,12 +221,8 @@ body {
 
 html {
   font-family: $root-font-family;
-  font-size: $root-font-size;
-  line-height: $root-line-height;
-
-  @media (min-width: $large-breakpoint) {
-    font-size: $large-font-size;
-  }
+  font-size: var(--main-font-size);
+  line-height: var(--main-line-height);
 }
 
 body {
@@ -236,7 +265,7 @@ table {
 
 td,
 th {
-  padding: .25rem .5rem;
+  padding: 0.25rem 0.5rem;
   border: 1px solid var(--fg-mute08);
 }
 
@@ -259,12 +288,12 @@ tbody tr:nth-child(odd) th {
  */
 
 h1, h2, h3, h4, h5, h6 {
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
   font-weight: 600;
   line-height: 1.25;
   color: var(--fg-accent2);
   text-rendering: optimizeLegibility;
-  letter-spacing: -.025rem;
+  letter-spacing: -0.025rem;
 }
 
 h1 {
@@ -301,7 +330,7 @@ dt {
 }
 
 dd {
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }
 
 hr {
@@ -325,18 +354,18 @@ abbr {
 }
 
 blockquote {
-  padding: .5rem 1rem;
-  margin: .8rem 0;
+  padding: {
+    top: 0.5rem;
+    bottom: 0.5rem;
+    left: var(--bquote-padding-left);
+    right: var(--bquote-padding-right);
+  }
+  margin: 0.8rem 0;
   color: var(--fg-mute03);
-  border-left: .25rem solid var(--fg-mute08);
+  border-left: 0.25rem solid var(--fg-mute08);
 
   p:last-child {
     margin-bottom: 0;
-  }
-
-  @media (min-width: 30em) {
-    padding-right: 5rem;
-    padding-left: 1.25rem;
   }
 }
 
@@ -355,7 +384,7 @@ a[href^="#fn:"],
 /* Back to footnote link */
 a[href^="#fnref:"] {
   display: inline-block;
-  margin-left: .1rem;
+  margin-left: 0.1rem;
   font-weight: bold;
 }
 
@@ -393,7 +422,7 @@ pre {
 }
 
 code {
-  padding: .25em .5em;
+  padding: 0.25em 0.5em;
   font-size: 85%;
   color: var(--code-fg);
   border-radius: 3px;
@@ -404,7 +433,7 @@ pre {
   margin-top: 0;
   margin-bottom: 1rem;
   overflow: auto;
-  font-size: .8rem;
+  font-size: 0.8rem;
   line-height: 1.4;
   white-space: pre;
   white-space: pre-wrap;
@@ -422,7 +451,7 @@ pre {
   padding: 1rem;
   margin-bottom: 1rem;
   background-color: var(--code-bg);
-  border-radius: .25rem;
+  border-radius: 0.25rem;
 
   pre {
     margin-bottom: 0;
@@ -445,7 +474,7 @@ pre {
   }
 
   .gutter {
-    color: #{rgba(#000, .25)};
+    color: #{rgba(#000, 0.25)};
     vertical-align: top;
     /* Make sure numbers aren't selectable */
     @include prefix(user-select, none, webkit ms);
@@ -462,17 +491,11 @@ pre {
  */
 
 .container {
-  max-width: 28rem;
+  max-width: var(--content-width);
   padding-left:  1rem;
   padding-right: 1rem;
   margin-left:  auto;
   margin-right: auto;
-  @media (min-width: 38em) {
-    max-width: 32rem;
-  }
-  @media (min-width: 56em) {
-    max-width: 38rem;
-  }
 }
 
 footer {
@@ -534,7 +557,7 @@ footer {
   margin-bottom: 4em;
 
   li + li {
-    margin-top: .25rem;
+    margin-top: 0.25rem;
   }
 }
 
@@ -552,7 +575,7 @@ footer {
 /* Meta data line below post title */
 .post-date {
   display: block;
-  margin-top: -.5rem;
+  margin-top: -0.5rem;
   margin-bottom: 1rem;
   color: var(--fg-mute05);
 }
@@ -628,7 +651,7 @@ a.pagination-item:hover {
   background-color: var(--fg-mute10);
 }
 
-@media (min-width: 30em) {
+@media (min-width: $width-trigger-tier2) {
   .pagination {
     margin: 3rem 0;
   }
@@ -723,6 +746,10 @@ a.pagination-item:hover {
   );
 }
 
+%sidebar-indicator-pos {
+  position: var(--sbar-indicator-pos);
+}
+
 /* Style and "hide" the sidebar */
 .sidebar {
   position: fixed;
@@ -732,15 +759,11 @@ a.pagination-item:hover {
   width: 14rem;
   visibility: hidden;
   overflow-y: auto;
-  font-size: .875rem; /* 15px */
+  font-size: 0.875rem;
   color: var(--sidebar-fg-mute1);
   background-color: var(--sidebar-bg);
-  @include prefix(transition, all .3s ease-in-out, webkit);
+  @include prefix(transition, all 0.3s ease-in-out, webkit);
   @include prefix(backface-visibility, hidden, webkit ms);
-
-  @media (min-width: 30em) {
-    font-size: .75rem; /* 14px */
-  }
 
   /* Sidebar content */
   a {
@@ -748,13 +771,9 @@ a.pagination-item:hover {
     color: var(--sidebar-fg);
   }
   &-item {
-    padding: 1rem;
+    padding: var(--sbar-item-pad);
     p:last-child {
       margin-bottom: 0;
-    }
-
-    @media (min-width: 48em) {
-      padding: 1.5rem;
     }
   }
 
@@ -763,13 +782,13 @@ a.pagination-item:hover {
     border-bottom: 1px solid var(--sidebar-fg-mute2);
     &-item {
       display: block;
-      padding: .5rem 1rem;
-      border-top: 1px solid var(--sidebar-fg-mute2);
-
-      @media (min-width: 48em) {
-        padding-left:  1.5rem;
-        padding-right: 1.5rem;
+      padding: {
+        top: var(--sbar-nav-item-pad-vertical);
+        bottom: var(--sbar-nav-item-pad-vertical);
+        left: var(--sbar-nav-item-pad-horizontal);
+        right: var(--sbar-nav-item-pad-horizontal);
       }
+      border-top: 1px solid var(--sidebar-fg-mute2);
 
       &.active {
         @extend %sidebar-nav-item-activate;
@@ -779,26 +798,26 @@ a.pagination-item:hover {
 
   /* Hide the sidebar checkbox that we toggle with `.sidebar-toggle` */
   &-checkbox {
-    position: absolute;
+    @extend %sidebar-indicator-pos;
     opacity: 0;
     @include prefix(user-select, none, webkit moz);
   }
 
   /* Style the `label` that we use to target the `.sidebar-checkbox` */
   &-toggle {
-    position: absolute;
-    top:  .8rem;
+    @extend %sidebar-indicator-pos;
+    top:  0.8rem;
     left: 1rem;
     display: block;
-    padding: .25rem .75rem;
+    padding: 0.25rem 0.75rem;
     @extend %sidebar-toggle-fill-off-solid;
-    border-radius: .25rem;
+    border-radius: 0.25rem;
     cursor: pointer;
     &:before {
       @extend %sidebar-toggle-fill-off-pattern;
       display: inline-block;
       width: 1rem;
-      height: .75rem;
+      height: 0.75rem;
       content: "";
     }
     &:active {
@@ -808,10 +827,6 @@ a.pagination-item:hover {
       }
     }
 
-    @media (min-width: 30.1em) {
-      position: fixed;
-    }
-    
     @media print {
       display: none;
     }
@@ -868,8 +883,8 @@ a.sidebar-nav-item {
 .wrap,
 .sidebar-toggle {
   @include prefix(backface-visibility, hidden, webkit ms);
-  -webkit-transition: -webkit-transform .3s ease-in-out;
-          transition: transform .3s ease-in-out;
+  -webkit-transition: -webkit-transform 0.3s ease-in-out;
+          transition: transform 0.3s ease-in-out;
 }
 
 #sidebar-checkbox:checked {
@@ -922,15 +937,15 @@ a.sidebar-nav-item {
       @include prefix(transform, translateX(0), webkit ms);
     }
     .sidebar-toggle {
-      box-shadow: 0 0 0 .25rem var(--sidebar-fg);
+      box-shadow: 0 0 0 0.25rem var(--sidebar-fg);
     }
     .sidebar {
-      box-shadow: .25rem 0 .5rem #{rgba(#000, .1)};
+      box-shadow: 0.25rem 0 0.5rem #{rgba(#000, 0.1)};
     }
   }
 }
 
 /* Only one tweak for a reverse layout */
 .layout-reverse.sidebar-overlay #sidebar-checkbox:checked ~ .sidebar {
-  box-shadow: -.25rem 0 .5rem #{rgba(#000, .1)};
+  box-shadow: -0.25rem 0 0.5rem #{rgba(#000, 0.1)};
 }
