@@ -61,6 +61,9 @@ endif
 
 fresh: | clean run
 
+# https://stackoverflow.com/questions/3004811
+# /how-do-you-run-multiple-programs-in-parallel-from-a-bash-script
+# /5553774#comment74281615_5553774
 run: | info html
 	@(sleep 1; $(OPEN_URL) "http://localhost:$(PORT)/") & $(MAKE) serve \
 	&& kill $!
