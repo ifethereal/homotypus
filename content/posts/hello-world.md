@@ -1,8 +1,9 @@
 Title: Hello World
-Date: 2020-01-18 21:32
+Date: 2020-01-18T21:32+11:00
 Category: Site announcements
 Slug: hello-world
 Summary: It begins.
+Tags: diagnostic
 
 Ave Maria, grazia ricevuta per la mia famiglia  
 Con risentito e un'amorevole divino  

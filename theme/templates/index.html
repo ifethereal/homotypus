@@ -4,13 +4,18 @@
 {% block content_title %}
 {% endblock %}
 </div>
+
+{% import "article_info.html" as info with context %}
 <div class="posts">
   {% for article in articles_page.object_list %}
   <div class="post">
     <h1 class="post-title">
       <a href="{{ SITEURL }}/{{ article.url }}" rel="bookmark" title="Permalink to {{ article.title|striptags }}">{{ article.title }}</a>
     </h1>
-    <span class="post-date">{{ article.locale_date }}</span>
+    <div class="post-info post-info-grid">
+      {{ info.date(article) }}
+      {{ info.authors_or_empty(article) }}
+    </div>
 
     {{ article.summary }}
   </div>

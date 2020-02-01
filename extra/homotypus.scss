@@ -572,14 +572,46 @@ footer {
   margin-top: 0;
 }
 
-/* Meta data line below post title */
-.post-date {
+/* Info lines below post title */
+.post-info {
   display: block;
+  color: var(--fg-mute05);
   margin-top: -0.5rem;
   margin-bottom: 1rem;
-  color: var(--fg-mute05);
+  &-grid {
+    display: grid;
+    grid-template-columns: repeat(2, min-content max-content);
+    align-items: baseline;
+    column-gap: 0.1em;
+  }
 }
 
+.post-info.post-info-grid > {
+  .post-info-icon {
+    padding-left: 0.1em;
+    padding-right: 0.1em;
+    justify-self: center;
+  }
+  .post-info-data {
+    padding-left: 0.1em;
+    padding-right: 1em;
+    .post-tag {
+      padding: 0.25em 0.5em;
+      font-size: 70%;
+      color: var(--fg-main);
+      border: 1px solid var(--fg-main);
+      border-radius: 3px;
+    }
+    a.post-tag {
+      &:hover, &:focus {
+        color: var(--sidebar-fg);
+        background-color: var(--fg-mute01);
+        border-color: transparent;
+        text-decoration: none;
+      }
+    }
+  }
+}
 
 /* Related posts */
 .related {
@@ -948,4 +980,14 @@ a.sidebar-nav-item {
 /* Only one tweak for a reverse layout */
 .layout-reverse.sidebar-overlay #sidebar-checkbox:checked ~ .sidebar {
   box-shadow: -0.25rem 0 0.5rem #{rgba(#000, 0.1)};
+}
+
+
+/*
+ * Font Awesome adjustments
+ */
+
+.icon {
+  position: relative;
+  top: 0.125em;
 }

@@ -1,8 +1,9 @@
 Title: Markdown test
-Date: 2020-01-26 22:47
+Date: 2020-01-26T22:47+11:00
 Category: Site testing
 Slug: markdown-test
 Summary: Do all Markdown features render as expected?
+Tags: diagnostic, long
 
 This document is written using Markdown and is a test of whether Gruber's
 Markdown features all render as expected under [Python-Markdown][py-md]. Many

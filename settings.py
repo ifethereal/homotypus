@@ -13,6 +13,12 @@ PATH = 'content'
 THEME = 'theme' # Pelicanyan
 DIRECT_TEMPLATES = ('index', 'categories', 'authors', 'archives',
                     'sitemap', 'robots', 'humans')
+STATIC_PATHS = ['images', '../extra/symbol-defs.svg', '../extra/symbols.css']
+ICONS_SVG_PATH = 'theme/img/symbol-defs.svg'
+EXTRA_PATH_METADATA = {
+    '../extra/symbol-defs.svg': {'path': ICONS_SVG_PATH},
+    '../extra/symbols.css': {'path': 'theme/css/symbols.css'}
+}
 
 # Locale information
 DEFAULT_LANG = u'en'
