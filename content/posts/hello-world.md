@@ -3,6 +3,7 @@ Date: 2020-01-18 21:32
 Category: Site announcements
 Slug: hello-world
 Summary: It begins.
+Tags: diagnostic
 
 Ave Maria, grazia ricevuta per la mia famiglia  
 Con risentito e un'amorevole divino  
