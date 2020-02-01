@@ -87,11 +87,39 @@ $root-font-family:
   Cantarell,          /* GNOME */
   "Helvetica Neue",   /* macOS versions < 10.11 */
   sans-serif;
-$root-font-size: 16px;
-$root-line-height: 1.5;
 
-$large-breakpoint: 38em;
-$large-font-size: 20px;
+$width-trigger-tier2: 38em;
+$width-trigger-tier3: 56em;
+
+:root {
+  --main-font-size: 16px;
+  --main-line-height: 1.5;
+  --content-width: 28rem;
+  --sbar-indicator-pos: absolute;
+  --sbar-item-pad: 1rem;
+  --sbar-nav-item-pad-vertical: 0.5rem;
+  --sbar-nav-item-pad-horizontal: 1rem;
+
+  --bquote-padding-left: 1rem;
+  --bquote-padding-right: 1rem;
+
+  @media (min-width: $width-trigger-tier2) {
+    --main-font-size: 20px;
+    --content-width: 32rem;
+    --bquote-padding-left: 1.25rem;
+    --bquote-padding-right: 5rem;
+  }
+
+  @media (min-width: $width-trigger-tier2 + 10em) {
+    --sbar-indicator-pos: fixed;
+    --sbar-item-pad: 1.5rem;
+    --sbar-nav-item-pad-horizontal: 1.5rem;
+  }
+
+  @media (min-width: $width-trigger-tier3) {
+    --content-width: 38rem;
+  }
+}
 
 $code-font-family:
   SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
@@ -188,12 +216,8 @@ body {
 
 html {
   font-family: $root-font-family;
-  font-size: $root-font-size;
-  line-height: $root-line-height;
-
-  @media (min-width: $large-breakpoint) {
-    font-size: $large-font-size;
-  }
+  font-size: var(--main-font-size);
+  line-height: var(--main-line-height);
 }
 
 body {
@@ -325,18 +349,18 @@ abbr {
 }
 
 blockquote {
-  padding: 0.5rem 1rem;
+  padding: {
+    top: 0.5rem;
+    bottom: 0.5rem;
+    left: var(--bquote-padding-left);
+    right: var(--bquote-padding-right);
+  }
   margin: 0.8rem 0;
   color: var(--fg-mute03);
   border-left: 0.25rem solid var(--fg-mute08);
 
   p:last-child {
     margin-bottom: 0;
-  }
-
-  @media (min-width: 30em) {
-    padding-right: 5rem;
-    padding-left: 1.25rem;
   }
 }
 
@@ -462,17 +486,11 @@ pre {
  */
 
 .container {
-  max-width: 28rem;
+  max-width: var(--content-width);
   padding-left:  1rem;
   padding-right: 1rem;
   margin-left:  auto;
   margin-right: auto;
-  @media (min-width: 38em) {
-    max-width: 32rem;
-  }
-  @media (min-width: 56em) {
-    max-width: 38rem;
-  }
 }
 
 footer {
@@ -723,6 +741,10 @@ a.pagination-item:hover {
   );
 }
 
+%sidebar-indicator-pos {
+  position: var(--sbar-indicator-pos);
+}
+
 /* Style and "hide" the sidebar */
 .sidebar {
   position: fixed;
@@ -732,15 +754,11 @@ a.pagination-item:hover {
   width: 14rem;
   visibility: hidden;
   overflow-y: auto;
-  font-size: 0.875rem; /* 15px */
+  font-size: 0.875rem;
   color: var(--sidebar-fg-mute1);
   background-color: var(--sidebar-bg);
   @include prefix(transition, all 0.3s ease-in-out, webkit);
   @include prefix(backface-visibility, hidden, webkit ms);
-
-  @media (min-width: 30em) {
-    font-size: 0.75rem; /* 14px */
-  }
 
   /* Sidebar content */
   a {
@@ -748,13 +766,9 @@ a.pagination-item:hover {
     color: var(--sidebar-fg);
   }
   &-item {
-    padding: 1rem;
+    padding: var(--sbar-item-pad);
     p:last-child {
       margin-bottom: 0;
-    }
-
-    @media (min-width: 48em) {
-      padding: 1.5rem;
     }
   }
 
@@ -763,13 +777,13 @@ a.pagination-item:hover {
     border-bottom: 1px solid var(--sidebar-fg-mute2);
     &-item {
       display: block;
-      padding: 0.5rem 1rem;
-      border-top: 1px solid var(--sidebar-fg-mute2);
-
-      @media (min-width: 48em) {
-        padding-left:  1.5rem;
-        padding-right: 1.5rem;
+      padding: {
+        top: var(--sbar-nav-item-pad-vertical);
+        bottom: var(--sbar-nav-item-pad-vertical);
+        left: var(--sbar-nav-item-pad-horizontal);
+        right: var(--sbar-nav-item-pad-horizontal);
       }
+      border-top: 1px solid var(--sidebar-fg-mute2);
 
       &.active {
         @extend %sidebar-nav-item-activate;
@@ -779,14 +793,14 @@ a.pagination-item:hover {
 
   /* Hide the sidebar checkbox that we toggle with `.sidebar-toggle` */
   &-checkbox {
-    position: absolute;
+    @extend %sidebar-indicator-pos;
     opacity: 0;
     @include prefix(user-select, none, webkit moz);
   }
 
   /* Style the `label` that we use to target the `.sidebar-checkbox` */
   &-toggle {
-    position: absolute;
+    @extend %sidebar-indicator-pos;
     top:  0.8rem;
     left: 1rem;
     display: block;
@@ -811,12 +825,6 @@ a.pagination-item:hover {
     @media print {
       display: none;
     }
-  }
-}
-
-@media (min-width: 30.1em) {
-  .sidebar-toggle, .sidebar-checkbox {
-    position: fixed;
   }
 }
 
