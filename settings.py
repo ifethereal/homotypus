@@ -11,7 +11,7 @@ PATH = 'content'
 
 # Theme setup
 THEME = 'theme' # Pelicanyan
-DIRECT_TEMPLATES = ('index', 'categories', 'authors', 'archives',
+DIRECT_TEMPLATES = ('index', 'categories', 'authors', 'tags', 'archives',
                     'sitemap', 'robots', 'humans')
 STATIC_PATHS = ['images', '../extra/symbol-defs.svg', '../extra/symbols.css']
 ICONS_SVG_PATH = 'theme/img/symbol-defs.svg'
