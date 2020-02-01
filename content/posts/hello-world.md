@@ -1,5 +1,5 @@
 Title: Hello World
-Date: 2020-01-18 21:32
+Date: 2020-01-18T21:32+11:00
 Category: Site announcements
 Slug: hello-world
 Summary: It begins.

@@ -1,5 +1,5 @@
 Title: Markdown test
-Date: 2020-01-26 22:47
+Date: 2020-01-26T22:47+11:00
 Category: Site testing
 Slug: markdown-test
 Summary: Do all Markdown features render as expected?
