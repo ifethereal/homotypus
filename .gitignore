@@ -108,3 +108,10 @@ dmypy.json
 .pyre/
 
 # End of https://www.gitignore.io/api/python
+
+### Homotypus ###
+# generated site files; make sure this is consistent with the makefile
+output/
+
+# processed CSS file; make sure this is consistent with the makefile
+theme/static/css/homotypus.css

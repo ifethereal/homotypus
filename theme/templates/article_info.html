@@ -1,0 +1,51 @@
+{% macro date(article) -%}
+<span class="post-info-icon">
+  <svg class="icon icon-calendar">
+    <use xlink:href="{{ SITEURL }}/{{ ICONS_SVG_PATH }}#icon-calendar"></use>
+  </svg>
+</span>
+<span class="post-info-data post-date" title="{{ article.date.isoformat() }}">{{ article.locale_date }}</span>
+{%- endmacro %}
+
+{% macro authors_or_empty(article) -%}
+{% if article.authors %}
+<span class="post-info-icon">
+  <svg class="icon icon-user">
+    <use xlink:href="{{ SITEURL }}/{{ ICONS_SVG_PATH }}#icon-user"></use>
+  </svg>
+</span>
+<span class="post-info-data post-authors">
+  {% for author in article.authors %}
+  <a class="post-author" href="{{ SITEURL }}/{{ author.url }}">{{ author }}</a>
+  {% endfor %}
+</span>
+{% endif %}
+{%- endmacro %}
+
+{% macro category_or_empty(article) -%}
+{% if article.category %}
+<span class="post-info-icon">
+  <svg class="icon icon-folder-open">
+    <use xlink:href="{{ SITEURL }}/{{ ICONS_SVG_PATH }}#icon-folder-open"></use>
+  </svg>
+</span>
+<span class="post-info-data">
+  <a href="{{ SITEURL }}/{{ article.category.url }}">{{ article.category }}</a>
+</span>
+{% endif %}
+{%- endmacro %}
+
+{% macro tags_or_empty(article) -%}
+{% if article.tags %}
+<span class="post-info-icon">
+  <svg class="icon icon-tags">
+    <use xlink:href="{{ SITEURL }}/{{ ICONS_SVG_PATH }}#icon-tags"></use>
+  </svg>
+</span>
+<span class="post-info-data">
+  {% for tag in article.tags %}
+  <a class="post-tag" href="{{ SITEURL }}/{{ tag.url }}">{{ tag }}</a class="post-author">
+  {% endfor %}
+</span>
+{% endif %}
+{%- endmacro %}
