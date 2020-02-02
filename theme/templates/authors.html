@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}{{ SITENAME }} - Authors{% endblock %}
+{% import "misc_macros.html" as misc with context %}
+{% block title %}{{ misc.title_fmt("Authors") }}{% endblock %}
 
 {% block content %}
-<h1>Authors on {{ SITENAME }}</h1>
+<h1>Authors</h1>
 {% if authors %}
 
 <ul>

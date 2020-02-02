@@ -1,7 +1,9 @@
 {% extends "index.html" %}
 
-{% block title %}{{ SITENAME }} - Articles by {{ author }}{% endblock %}
+{% import "misc_macros.html" as misc with context %}
+{% block title %}{{ misc.title_fmt("Posts by {}".format(author)) }}{% endblock %}
+
 {% block content_title %}
-<h2>Articles by {{ author }}</h2>
+<h2>Posts by {{ author }}</h2>
 {% endblock %}
 

@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}{{ SITENAME }} - Tags{% endblock %}
+{% import "misc_macros.html" as misc with context %}
+{% block title %}{{ misc.title_fmt("Tags") }}{% endblock %}
 
 {% block content %}
-<h1>Tags for {{ SITENAME }}</h1>
+<h1>Tags</h1>
 {% if tags %}
 
 <ul>
