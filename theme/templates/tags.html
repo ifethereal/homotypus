@@ -6,8 +6,10 @@
 <h1>Tags for {{ SITENAME }}</h1>
 {% if tags %}
 
-{% for tag, articles in tags|sort %}
-<li><a href="{{ SITEURL }}/{{ tag.url }}">{{ tag }}</a> ({{ articles|count }})</li>
-{% endfor %}
+<ul>
+  {% for tag, articles in tags|sort %}
+  <li><a href="{{ SITEURL }}/{{ tag.url }}">{{ tag }}</a> ({{ articles|count }})</li>
+  {% endfor %}
+</ul>
 {% endif %}
 {% endblock %}
