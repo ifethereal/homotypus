@@ -8,7 +8,7 @@
 
 <ul>
   {% for category, articles in categories %}
-  <li><a href="{{ SITEURL }}/{{ category.url }}">{{ category }}</a></li>
+  <li><a href="{{ SITEURL }}/{{ category.url }}">{{ category }}</a> ({{ articles|count }})</li>
   {% endfor %}
 </ul>
 {% endblock %}
