@@ -1,35 +1,47 @@
 {% extends "base.html" %}
 {% block head %}
-  {{ super() }}
-  {% for keyword in article.keywords %}
-    <meta name="keywords" contents="{{ keyword }}" />
-  {% endfor %}
+{{ super() }}
+{%- filter indent(width=4, first=True) %}
+{% if article.keywords %}
 
-  {% for description in article.description %}
-    <meta name="description" contents="{{ description }}" />
-  {% endfor %}
+{% for keyword in article.keywords %}
+<meta name="keywords" contents="{{ keyword }}" />
+{% endfor %}
+{% endif %}
+{% if article.description %}
 
-  {% for tag in article.tags %}
-    <meta name="tags" contents="{{ tag }}" />
-  {% endfor %}
+{% for description in article.description %}
+<meta name="description" contents="{{ description }}" />
+{% endfor %}
+{% endif %}
+{% if article.tags %}
 
+{% for tag in article.tags %}
+<meta name="tags" contents="{{ tag }}" />
+{% endfor %}
+{% endif %}
+{% endfilter %}
 {% endblock %}
 
 {% import "article_info.html" as info with context %}
 {% block content %}
 <div class="posts">
-<div class="post">
+  <div class="post">
     <h1 class="post-title">
       {{ article.title }}
     </h1>
     <div class="post-info post-info-grid">
-      {{ info.date(article) }}
-      {{ info.authors_or_empty(article) }}
-      {{ info.category_or_empty(article) }}
-      {{ info.tags_or_empty(article) }}
+      {% filter indent(width=6, first=True) %}
+      {{- info.date(article) }}
+      {{- info.authors_or_empty(article) }}
+      {{- info.category_or_empty(article) }}
+      {{- info.tags_or_empty(article) }}
+      {%- endfilter %}
     </div>
 
-    {{ article.content }}
+    {% filter indent(width=4, first=True) %}
+    {{- article.content }}
+    {% endfilter %}
   </div>
 </div>
 {% endblock %}
