@@ -37,6 +37,7 @@ ARTICLE_URL = 'posts/{date:%Y}/{date:%m}/{date:%d}/{slug}/'
 ARTICLE_SAVE_AS = 'posts/{date:%Y}/{date:%m}/{date:%d}/{slug}/index.html'
 PAGE_URL = 'pages/{slug}/'
 PAGE_SAVE_AS = 'pages/{slug}/index.html'
+YEAR_ARCHIVE_SAVE_AS = 'posts/{date:%Y}/index.html'
 
 # Site directives; these happen to have templates in Pelicanyan
 ROBOTS_SAVE_AS = 'robots.txt'
