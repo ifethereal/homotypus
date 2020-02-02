@@ -6,6 +6,8 @@ AUTHOR = u'Homotypus Team'
 SITENAME = u'Homotypus'
 SITEURL = ''
 
+DEFAULT_CATEGORY = 'Sundry'
+
 # Directory containing site content; needs to be consistent with the makefile
 PATH = 'content'
 
