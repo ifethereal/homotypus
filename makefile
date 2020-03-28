@@ -87,14 +87,14 @@ html: css | info
 	@$(PELICAN) $(INPUTDIR) -o $(OUTPUTDIR) -s $(CONFFILE) $(PELICANOPTS)
 
 clean:
-	@[ ! -d $(OUTPUTDIR) ] || (\
-		echo Removing output directory; \
-		rm -rf $(OUTPUTDIR) \
-	)
-	@[ ! -f $(SASSOUT) ] || (\
-		echo Removing generated CSS files; \
-		rm -rf $(SASSOUT) \
-	)
+ifneq (,$(wildcard $(OUTPUTDIR)))
+	@echo Removing output directory
+	@rm -rf $(OUTPUTDIR)
+endif
+ifneq (,$(wildcard $(SASSOUT)))
+	@echo Removing generated CSS files
+	@rm -rf $(SASSOUT)
+endif
 
 regenerate: css | info
 	$(PELICAN) -r $(INPUTDIR) -o $(OUTPUTDIR) -s $(CONFFILE) $(PELICANOPTS)
