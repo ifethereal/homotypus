@@ -34,30 +34,44 @@ ifeq ($(RELATIVE), 1)
 	PELICANOPTS += --relative-urls
 endif
 
+# Shows the current directory settings
+define DEBUGSTRING
+Makefile for Homotypus
+
+Content directory:        $(INPUTDIR)
+Output directory:         $(OUTPUTDIR)
+Pelican settings file:    $(CONFFILE)
+
+endef
+
+# Shows how to use the makefile
+define HELPSTRING
+Usage:
+    make run [PORT=8000]          [re]generate, serve, and open site
+    make fresh [PORT=8000]        regenerate, serve, and open site
+    make html                     [re]generate the web site
+    make css                      [re]generate just the CSS
+    make clean                    remove the generated files
+    make regenerate               regenerate files upon modification
+    make serve [PORT=8000]        serve site at http://localhost:8000
+    make serve-global [SERVER=0.0.0.0]
+                                  serve (as root) to $(SERVER):80
+    make devserver [PORT=8000]    serve and regenerate together
+
+Set the DEBUG variable to 1 to enable debugging, e.g. make DEBUG=1 html
+Set the RELATIVE variable to 1 to enable relative urls
+
+endef
+
 help: info
-	@echo -e \
-	'Usage:\n'\
-	'   make run [PORT=8000]          [re]generate, serve, and open site\n'\
-	'   make fresh [PORT=8000]        regenerate, serve, and open site\n'\
-	'   make html                     [re]generate the web site\n'\
-	'   make css                      [re]generate just the CSS\n'\
-	'   make clean                    remove the generated files\n'\
-	'   make regenerate               regenerate files upon modification\n'\
-	'   make serve [PORT=8000]        serve site at http://localhost:8000\n'\
-	'   make serve-global [SERVER=0.0.0.0]\n'\
-	'                                 serve (as root) to $(SERVER):80\n'\
-	'   make devserver [PORT=8000]    serve and regenerate together\n\n'\
-	'Set the DEBUG variable to 1 to enable debugging, e.g. make DEBUG=1 html\n'\
-	'Set the RELATIVE variable to 1 to enable relative urls\n'
+	$(info $(HELPSTRING))
+	@:
 
 info:
 ifeq ($(DEBUG), 1)
-	@echo -e \
-	'Makefile for Homotypus\n\n'\
-	'Content directory:        $(INPUTDIR)\n'\
-	'Output directory:         $(OUTPUTDIR)\n'\
-	'Pelican settings file:    $(CONFFILE)\n\n'
+	$(info $(DEBUGSTRING))
 endif
+	@:
 
 fresh: | clean run
 
