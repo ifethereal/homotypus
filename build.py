@@ -302,7 +302,48 @@ def build_css(dtSassPath):
 
 
 def clean():
-    raise NotImplementedError
+    archivist = logging.getLogger(LOGGER_NAME)
+
+    dpPelOut = get_pel_output_dir()
+    flagRmPel = op.isdir(dpPelOut)
+
+    fpSassOut = get_sass_output_file()
+    flagRmSass = op.isfile(fpSassOut)
+
+    lstFlagRm = [flagRmPel, flagRmSass]
+    lstDesc = [
+        "Pelican output directory [{}]".format(dpPelOut),
+        "Sass output CSS file [{}]".format(fpSassOut)
+    ]
+    flagRmAny = any(lstFlagRm)
+    if flagRmAny:
+        archivist.info("The following will be removed:")
+        for (desc, flagRm) in zip(lstDesc, lstFlagRm):
+            if flagRm:
+                archivist.info("    " + desc)
+
+        archivist.info("")
+    else:
+        archivist.info("Nothing to remove")
+
+    if op.isdir(dpPelOut):
+        try:
+            import shutil
+            shutil.rmtree(dpPelOut)
+            archivist.info("Removed Pelican output directory")
+        except e:
+            archivist.error("Could not remove Pelican output directory")
+            raise e
+
+    if op.isfile(fpSassOut):
+        try:
+            os.remove(fpSassOut)
+            archivist.info("Removed Sass output file")
+        except e:
+            archivist.error("Could not remove Sass output file")
+            raise e
+
+    archivist.info("")
 
 
 def dump_path_diagnostic(dtPath, strHead = None):
