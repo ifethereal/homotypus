@@ -26,6 +26,7 @@ LOGGER_NAME = "Bob"
 FP_PELICAN_SETUP = "settings.py"
 
 class ArgName:
+    DEBUG = "debug"
     PORT = "port"
 
 class SubCmd:
@@ -50,13 +51,13 @@ class SassArgLabel:
 
 
 # LOGGER SUPPORT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-def create_logger(name = LOGGER_NAME):
+def create_logger(name = LOGGER_NAME, level = logging.INFO):
     archivist = logging.getLogger(name)
     archivist.setLevel(logging.DEBUG)
 
     # Set up logging to terminal
     terminal = logging.StreamHandler(sys.stdout)
-    terminal.setLevel(logging.INFO)
+    terminal.setLevel(level)
     archivist.addHandler(terminal)
 
     # Want the timestamp to be formatted like 'Thu 28 Mar 2019 13:23:28'
@@ -197,6 +198,11 @@ def create_cmd_line_parser():
         description = "A build script for developing the {} website" \
         .format(PROJECT_NAME)
     )
+    parser.add_argument(
+        "--debug",
+        dest = ArgName.DEBUG, action = "store_true"
+    )
+
     subparsers = parser.add_subparsers(
         description = "Different build modes", dest = SubCmd._SUBCMD
     )
@@ -412,13 +418,15 @@ def dump_path_diagnostic(dtPath, strHead = None):
 
 
 def main():
-    archivist = create_logger()
-    # create_logger()
-
     parser = create_cmd_line_parser()
     args = parser.parse_args()
-    subcmd = getattr(args, SubCmd._SUBCMD)
 
+    flagDebug = getattr(args, ArgName.DEBUG)
+    terminalLogLevel = logging.DEBUG if flagDebug else logging.INFO
+
+    archivist = create_logger(level = terminalLogLevel)
+
+    subcmd = getattr(args, SubCmd._SUBCMD)
     archivist.info("Running in \"%s\" mode", subcmd)
 
     flagNeedPel = subcmd in [SubCmd.HTML, SubCmd.SITE, SubCmd.SERVE]
