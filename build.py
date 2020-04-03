@@ -26,7 +26,7 @@ LOGGER_NAME = "Bob"
 FP_PELICAN_SETUP = "settings.py"
 
 class ArgName:
-    pass
+    PORT = "port"
 
 class SubCmd:
     _SUBCMD = "subcommand"
@@ -35,6 +35,7 @@ class SubCmd:
     HTML = "html"
     CSS = "css"
     CLEAN = "clean"
+    SERVE = "serve"
 
 class PelicanArgLabel:
     INPUT = "Content directory"
@@ -214,6 +215,14 @@ def create_cmd_line_parser():
         name = SubCmd.CLEAN, help = "Remove existing HTML and CSS files"
     )
 
+    parserServe = subparsers.add_parser(
+        name = SubCmd.SERVE, help = "Serve Pelican site locally"
+    )
+    parserServe.add_argument(
+        "-p", "--port",
+        dest = ArgName.PORT, type = int, default = 8000
+    )
+
     return parser
 
 
@@ -350,6 +359,35 @@ def clean():
     archivist.info("")
 
 
+def serve(cmdLineArgs, dtPelPath):
+    # This method won't return until the user stops the server
+    archivist = logging.getLogger(LOGGER_NAME)
+    archivist.info("Serving Pelican site...")
+
+    fpSettings = dtPelPath[PelicanArgLabel.SETTINGS]
+    dpIn = dtPelPath[PelicanArgLabel.INPUT]
+    dpOut = dtPelPath[PelicanArgLabel.OUTPUT]
+
+    port = getattr(cmdLineArgs, ArgName.PORT)
+    flagDebug = getattr(cmdLineArgs, ArgName.DEBUG)
+
+    cmdPel = get_pel_cmd()
+    if not isinstance(cmdPel, list):
+        cmdPel = [cmdPel]
+    args = cmdPel + [
+        dpIn, "--output", dpOut, "--settings", fpSettings,
+        "--port", str(port), "--listen"
+    ]
+    if flagDebug:
+        args.append("--debug")
+
+    archivist.debug("About to execute the following command:")
+    archivist.debug("    %r", args)
+
+    proc = sp.Popen(args, creationflags = sp.CREATE_NEW_CONSOLE)
+    proc.wait()
+
+
 def dump_path_diagnostic(dtPath, strHead = None):
     labelColWidth = 0
     for (k, v) in dtPath.items():
@@ -383,7 +421,7 @@ def main():
 
     archivist.info("Running in \"%s\" mode", subcmd)
 
-    flagNeedPel = subcmd in [SubCmd.HTML, SubCmd.SITE]
+    flagNeedPel = subcmd in [SubCmd.HTML, SubCmd.SITE, SubCmd.SERVE]
     flagNeedSass = subcmd in [SubCmd.CSS, SubCmd.SITE]
     flagNeedExt = any([flagNeedPel, flagNeedSass])
 
@@ -420,6 +458,8 @@ def main():
             build_html(dtPelPath)
         elif subcmd == SubCmd.CLEAN:
             clean()
+        elif subcmd == SubCmd.SERVE:
+            serve(args, dtPelPath)
     except:
         destroy_logger()
         return 1
