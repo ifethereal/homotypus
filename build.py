@@ -267,7 +267,9 @@ def build_html(dtPelPath):
         archivist.info("Pelican finished successfully")
         archivist.info("")
     else:
-        raise Exception("Pelican did not finish successfully")
+        strErrMsg = "Pelican did not finish successfully"
+        archivist.error(strErrMsg)
+        raise Exception(strErrMsg)
 
 
 def build_css(dtSassPath):
@@ -298,7 +300,9 @@ def build_css(dtSassPath):
         archivist.info("Sass finished successfully")
         archivist.info("")
     else:
-        raise Exception("Sass did not finish successfully")
+        strErrMsg = "Sass did not finish successfully"
+        archivist.error(strErrMsg)
+        raise Exception(strErrMsg)
 
 
 def clean():
@@ -419,6 +423,8 @@ def main():
     except:
         destroy_logger()
         return 1
+
+    archivist.info("Finished")
 
     destroy_logger()
     return 0
