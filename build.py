@@ -265,8 +265,8 @@ def build_html(dtPelPath):
     proc = sp.Popen(
         args, stdout = sp.PIPE, stderr = sp.STDOUT, universal_newlines = True
     )
-    archivist.debug("Executed the following command as PID %d:", proc.pid)
-    archivist.debug("%r", args)
+    archivist.debug("Executed the following command as PID %d", proc.pid)
+    archivist.debug("    %r", args)
 
     for line in iter(proc.stdout.readline, ""):
         archivist.info(line.rstrip('\n'))
@@ -298,8 +298,8 @@ def build_css(dtSassPath):
     proc = sp.Popen(
         args, stdout = sp.PIPE, stderr = sp.STDOUT, universal_newlines = True
     )
-    archivist.debug("Executed the following command as PID %d:", proc.pid)
-    archivist.debug("%r", args)
+    archivist.debug("Executed the following command as PID %d", proc.pid)
+    archivist.debug("    %r", args)
 
     for line in iter(proc.stdout.readline, ""):
         archivist.info(line.rstrip('\n'))
