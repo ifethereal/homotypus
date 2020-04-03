@@ -19,11 +19,11 @@ import os
 import os.path as op
 import subprocess as sp
 
+
 # CONSTANTS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PROJECT_NAME = "Homotypus"
 LOGGER_NAME = "Bob"
 FP_PELICAN_SETUP = "settings.py"
-CMD_PELICAN = "pelican"
 
 class ArgName:
     pass
@@ -41,7 +41,12 @@ class PelicanArgLabel:
     OUTPUT = "Output directory"
     SETTINGS = "Settings file"
 
+class SassArgLabel:
+    INPUT = "Input source file"
+    OUTPUT = "Output file"
+
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
 
 # LOGGER SUPPORT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 def create_logger(name = LOGGER_NAME):
@@ -74,45 +79,23 @@ def destroy_logger(name = LOGGER_NAME):
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-def create_cmd_line_parser():
-    import argparse
-
-    parser = argparse.ArgumentParser(
-        description = "A build script for developing the Homotypus website"
-    )
-    subparsers = parser.add_subparsers(
-        description = "Different build modes", dest = SubCmd._SUBCMD
-    )
-    subparsers.required = True
-
-    subparsers.add_parser(
-        name = SubCmd.SITE, help = "Regenerate the HTML and CSS files"
-    )
-    subparsers.add_parser(
-        name = SubCmd.HTML, help = "Regenerate the HTML files"
-    )
-    subparsers.add_parser(
-        name = SubCmd.CSS, help = "Regenerate the CSS files"
-    )
-    subparsers.add_parser(
-        name = SubCmd.CLEAN, help = "Regenerate the CSS files"
-    )
-
-    return parser
-
-
-def get_input_dir():
+# PELICAN SUPPORTING FUNCTIONALITY >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+def get_pel_input_dir():
     return "content"
 
 
-def get_output_dir():
+def get_pel_output_dir():
     return "output"
+
+
+def get_pel_cmd():
+    return "pelican"
 
 
 def build_pelican_paths(dpCur = os.getcwd()):
     fpSettings = op.abspath(op.join(dpCur, FP_PELICAN_SETUP))
-    dpIn = op.abspath(op.join(dpCur, get_input_dir()))
-    dpOut = op.abspath(op.join(dpCur, get_output_dir()))
+    dpIn = op.abspath(op.join(dpCur, get_pel_input_dir()))
+    dpOut = op.abspath(op.join(dpCur, get_pel_output_dir()))
 
     result = {
         PelicanArgLabel.INPUT: dpIn,
@@ -123,7 +106,7 @@ def build_pelican_paths(dpCur = os.getcwd()):
     return result
 
 
-def check_valid_dir_structure(dpCur = os.getcwd()):
+def check_valid_pel_dir_structure(dpCur = os.getcwd()):
     lstPassCheck = []
     lstFailMsg = []
 
@@ -147,26 +130,114 @@ def check_valid_dir_structure(dpCur = os.getcwd()):
     )
 
     archivist = logging.getLogger(LOGGER_NAME)
-    for (m, p) in zip(lstFailMsg, lstPassCheck):
-        if not p:
+    for (m, passed) in zip(lstFailMsg, lstPassCheck):
+        if not passed:
             archivist.error(m)
 
     return all(lstPassCheck)
 
 
-def check_valid_pelican():
+#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+# SASS SUPPORTING FUNCTIONALITY>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+def get_sass_input_file():
+    return op.join("extra", "homotypus.scss")
+
+
+def get_sass_output_file():
+    return op.join("theme", "static", "css", "homotypus.css")
+
+
+def get_sass_cmd():
+    if os.name == "nt":
+        # Windows
+        return ["cmd", "/C", "sass"]
+    elif os.name == "posix":
+        # UNIX
+        return "sass"
+    else:
+        raise NotImplementedError
+
+
+def build_sass_paths(dpCur = os.getcwd()):
+    fpIn = op.abspath(op.join(dpCur, get_sass_input_file()))
+    fpOut = op.abspath(op.join(dpCur, get_sass_output_file()))
+
+    result = {SassArgLabel.INPUT: fpIn, SassArgLabel.OUTPUT: fpOut}
+
+    return result
+
+
+def check_valid_sass_file_structure(dpCur = os.getcwd()):
+    if not op.isdir(dpCur):
+        raise ValueError("No such directory [{}] exists".format(dpCur))
+
+    p = build_sass_paths(dpCur)
+
+    archivist = logging.getLogger(LOGGER_NAME)
+    fpIn = p[SassArgLabel.INPUT]
+    if not op.isfile(fpIn):
+        archivist.error(
+            "The expected Sass source file [%s] does not exist", fpIn
+        )
+        return False
+
+    return True
+
+
+#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+def create_cmd_line_parser():
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description = "A build script for developing the {} website" \
+        .format(PROJECT_NAME)
+    )
+    subparsers = parser.add_subparsers(
+        description = "Different build modes", dest = SubCmd._SUBCMD
+    )
+    subparsers.required = True
+
+    subparsers.add_parser(
+        name = SubCmd.SITE, help = "Regenerate the HTML and CSS files"
+    )
+    subparsers.add_parser(
+        name = SubCmd.HTML, help = "Regenerate the HTML files"
+    )
+    subparsers.add_parser(
+        name = SubCmd.CSS, help = "Regenerate the CSS files"
+    )
+    subparsers.add_parser(
+        name = SubCmd.CLEAN, help = "Remove existing HTML and CSS files"
+    )
+
+    return parser
+
+
+def check_valid_ext(lstCmd, strLabel):
+    """
+    Generic function to check if a certain external dependency exists and can
+    be executed.
+    """
+
+    if not isinstance(lstCmd, list):
+        return check_valid_ext([lstCmd], strLabel)
+
     archivist = logging.getLogger(LOGGER_NAME)
 
     try:
-        # Attempt to get the installed version number of Pelican
+        # Attempt to get the installed version number
         strOut = sp.check_output(
-            [CMD_PELICAN, "--version"], universal_newlines = True
+            lstCmd + ["--version"], universal_newlines = True
         ).strip()
-        archivist.info("Detected Pelican %s", strOut)
+        archivist.info("Detected %s %s", strLabel, strOut)
         return True
     except:
         # Pelican probably not installed or not using conda etc.
-        archivist.error("Could not call Pelican")
+        archivist.error("Could not call %s", strLabel)
         return False
 
 
@@ -178,27 +249,83 @@ def build_html(dtPelPath):
     dpIn = dtPelPath[PelicanArgLabel.INPUT]
     dpOut = dtPelPath[PelicanArgLabel.OUTPUT]
 
+    cmdPel = get_pel_cmd()
+    if not isinstance(cmdPel, list):
+        cmdPel = [cmdPel]
+    args = cmdPel + [dpIn, "--output", dpOut, "--settings", fpSettings]
     proc = sp.Popen(
-        [CMD_PELICAN, dpIn, "--output", dpOut, "--settings", fpSettings],
-        stdout = sp.PIPE, stderr = sp.STDOUT, universal_newlines = True
+        args, stdout = sp.PIPE, stderr = sp.STDOUT, universal_newlines = True
     )
+    archivist.debug("Executed the following command as PID %d:", proc.pid)
+    archivist.debug("%r", args)
 
     for line in iter(proc.stdout.readline, ""):
         archivist.info(line.rstrip('\n'))
 
-    proc.wait()
+    retcode = proc.wait()
+    if retcode == 0:
+        archivist.info("Pelican finished successfully")
+        archivist.info("")
+    else:
+        raise Exception("Pelican did not finish successfully")
 
 
-def dump_diagnostic(dtPelPath):
+def build_css(dtSassPath):
+    archivist = logging.getLogger(LOGGER_NAME)
+    archivist.info("Generating CSS files using Sass")
+
+    fpIn = dtSassPath[SassArgLabel.INPUT]
+    fpOut = dtSassPath[SassArgLabel.OUTPUT]
+
+    if op.isfile(fpOut):
+        archivist.info("Existing file [%s] will be overwritten by Sass", fpOut)
+
+    cmdSass = get_sass_cmd()
+    if not isinstance(cmdSass, list):
+        cmdSass = [cmdSass]
+    args = cmdSass + ["--no-quiet", "--embed-source-map", fpIn, fpOut]
+    proc = sp.Popen(
+        args, stdout = sp.PIPE, stderr = sp.STDOUT, universal_newlines = True
+    )
+    archivist.debug("Executed the following command as PID %d:", proc.pid)
+    archivist.debug("%r", args)
+
+    for line in iter(proc.stdout.readline, ""):
+        archivist.info(line.rstrip('\n'))
+
+    retcode = proc.wait()
+    if retcode == 0:
+        archivist.info("Sass finished successfully")
+        archivist.info("")
+    else:
+        raise Exception("Sass did not finish successfully")
+
+
+def clean():
+    raise NotImplementedError
+
+
+def dump_path_diagnostic(dtPath, strHead = None):
     labelColWidth = 0
-    for (k, v) in dtPelPath.items():
+    for (k, v) in dtPath.items():
         labelColWidth = max(labelColWidth, len(k))
 
     archivist = logging.getLogger(LOGGER_NAME)
-    for (k, v) in dtPelPath.items():
+
+    NUM_CHAR_HEADER = 80
+
+    flagHead = not strHead is None and isinstance(strHead, str)
+    if flagHead:
+        archivist.info((strHead + ' ').ljust(NUM_CHAR_HEADER, '>').rstrip())
+
+    for (k, v) in dtPath.items():
         archivist.info("{label:<{width}}    {value}".format(
             label = k + ":", width = labelColWidth + 1, value = v
         ))
+
+    if flagHead:
+        archivist.info('<' * NUM_CHAR_HEADER)
+        archivist.info("")
 
 
 def main():
@@ -211,28 +338,48 @@ def main():
 
     archivist.info("Running in \"%s\" mode", subcmd)
 
+    flagNeedPel = subcmd in [SubCmd.HTML, SubCmd.SITE]
+    flagNeedSass = subcmd in [SubCmd.CSS, SubCmd.SITE]
+    flagNeedExt = any([flagNeedPel, flagNeedSass])
+
     try:
-        assert check_valid_dir_structure()
-        assert check_valid_pelican()
+        if flagNeedPel:
+            assert check_valid_pel_dir_structure()
+            assert check_valid_ext(get_pel_cmd(), "Pelican")
+
+        if flagNeedSass:
+            assert check_valid_sass_file_structure()
+            assert check_valid_ext(get_sass_cmd(), "Sass")
     except AssertionError:
         destroy_logger()
         return 1
 
-    dtPelPath = build_pelican_paths()
+    if flagNeedExt:
+        archivist.info("")
 
-    dump_diagnostic(dtPelPath)
+    if flagNeedPel:
+        dtPelPath = build_pelican_paths()
+        dump_path_diagnostic(dtPelPath, "Pelican arguments")
 
-    if subcmd == SubCmd.HTML:
-        build_html(dtPelPath)
-    elif subcmd == SubCmd.CSS:
-        pass
-    elif subcmd == SubCmd.SITE:
-        pass
-    elif subcmd == SubCmd.CLEAN:
-        pass
+    if flagNeedSass:
+        dtSassPath = build_sass_paths()
+        dump_path_diagnostic(dtSassPath, "Sass arguments")
+
+    try:
+        if subcmd == SubCmd.HTML:
+            build_html(dtPelPath)
+        elif subcmd == SubCmd.CSS:
+            build_css(dtSassPath)
+        elif subcmd == SubCmd.SITE:
+            build_css(dtSassPath)
+            build_html(dtPelPath)
+        elif subcmd == SubCmd.CLEAN:
+            clean()
+    except:
+        destroy_logger()
+        return 1
 
     destroy_logger()
-
     return 0
 
 
