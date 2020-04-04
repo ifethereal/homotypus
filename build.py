@@ -280,7 +280,6 @@ def build_html(dtPelPath):
     retcode = proc.wait()
     if retcode == 0:
         archivist.info("Pelican finished successfully")
-        archivist.info("")
     else:
         strErrMsg = "Pelican did not finish successfully"
         archivist.error(strErrMsg)
@@ -313,7 +312,6 @@ def build_css(dtSassPath):
     retcode = proc.wait()
     if retcode == 0:
         archivist.info("Sass finished successfully")
-        archivist.info("")
     else:
         strErrMsg = "Sass did not finish successfully"
         archivist.error(strErrMsg)
@@ -361,8 +359,6 @@ def clean():
         except e:
             archivist.error("Could not remove Sass output file")
             raise e
-
-    archivist.info("")
 
 
 def serve(cmdLineArgs, dtPelPath):
@@ -472,6 +468,7 @@ def main():
         destroy_logger()
         return 1
 
+    archivist.info("")
     archivist.info("Finished")
 
     destroy_logger()
