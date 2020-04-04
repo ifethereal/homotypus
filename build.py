@@ -540,6 +540,8 @@ def main():
     flagNeedPelOut = subcmd in [SubCmd.SERVE_PELICAN, SubCmd.SERVE_PYTHON]
 
     # Do Pelican output destinations need to be specified?
+    # Only use is for deciding if we should remind the user what the output
+    # destinations are.
     flagNeedPelOutSpec = flagNeedPelOut or subcmd in [SubCmd.HTML, SubCmd.SITE]
 
     # Do Sass input files need to exist?
@@ -552,6 +554,10 @@ def main():
     flagNeedSassOut = subcmd in [SubCmd.HTML]
 
     # Do Sass output destinations need to be specified?
+    # Only use is for deciding if we should remind the user what the output
+    # destinations are. Note that if Pelican is building the site, it already
+    # knows where to find the Sass output file, and the user does not need to
+    # know.
     flagNeedSassOutSpec = subcmd in [SubCmd.CSS, SubCmd.SITE]
 
     # Sass creates any necessary directories needed for writing to the
