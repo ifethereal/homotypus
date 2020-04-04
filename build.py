@@ -108,7 +108,7 @@ def build_pelican_paths(dpCur = os.getcwd()):
     return result
 
 
-def check_valid_pel_dir_structure(dpCur = os.getcwd()):
+def check_valid_pel_dir_structure(dpCur = os.getcwd(), wantOut = False):
     lstPassCheck = []
     lstFailMsg = []
 
@@ -131,10 +131,23 @@ def check_valid_pel_dir_structure(dpCur = os.getcwd()):
         .format(dpIn)
     )
 
+    if wantOut:
+        dpOut = p[PelicanArgLabel.OUTPUT]
+        lstPassCheck.append(op.isdir(dpOut))
+        lstFailMsg.append([
+            "The Pelican output directory [{}] does not exist".format(dpOut),
+            "Make sure Pelican has been used to generate the site"
+        ])
+
     archivist = logging.getLogger(LOGGER_NAME)
     for (m, passed) in zip(lstFailMsg, lstPassCheck):
         if not passed:
-            archivist.error(m)
+            if isinstance(m, list):
+                lstMsg = m
+            else:
+                lstMsg = [m]
+            for msg in lstMsg:
+                archivist.error(msg)
 
     return all(lstPassCheck)
 
@@ -426,12 +439,17 @@ def main():
     archivist.info("Running in \"%s\" mode", subcmd)
 
     flagNeedPel = subcmd in [SubCmd.HTML, SubCmd.SITE, SubCmd.SERVE]
+    flagNeedPelOut = subcmd in [SubCmd.SERVE]
     flagNeedSass = subcmd in [SubCmd.CSS, SubCmd.SITE]
+
+    # Cannot want the output from Pelican without wanting Pelican
+    assert flagNeedPel or not flagNeedPelOut
+
     flagNeedExt = any([flagNeedPel, flagNeedSass])
 
     try:
         if flagNeedPel:
-            assert check_valid_pel_dir_structure()
+            assert check_valid_pel_dir_structure(wantOut = flagNeedPelOut)
             assert check_valid_ext(get_pel_cmd(), "Pelican")
 
         if flagNeedSass:
