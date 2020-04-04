@@ -21,7 +21,8 @@ This repository contains the source code for the Homotypus blog.
 Once the conda environment is set up and activated, navigate to the root of the
 repository and run
 ```
-make fresh
+python build.py site
+python build.py serve-pelican
 ```
 
 The site will open up at http://localhost:8000/.
