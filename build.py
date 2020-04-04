@@ -121,7 +121,7 @@ def check_valid_pel_dir_structure(dpCur = os.getcwd(), wantOut = False):
     lstPassCheck.append(op.isfile(fpSettings))
     lstFailMsg.append(
         "The expected Pelican settings file [{}] does not exist" \
-        .format(dpCur, FP_PELICAN_SETUP)
+        .format(fpSettings)
     )
 
     dpIn = p[PelicanArgLabel.INPUT]
