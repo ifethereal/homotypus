@@ -361,17 +361,17 @@ def clean():
             import shutil
             shutil.rmtree(dpPelOut)
             archivist.info("Removed Pelican output directory")
-        except e:
+        except:
             archivist.error("Could not remove Pelican output directory")
-            raise e
+            raise
 
     if op.isfile(fpSassOut):
         try:
             os.remove(fpSassOut)
             archivist.info("Removed Sass output file")
-        except e:
+        except:
             archivist.error("Could not remove Sass output file")
-            raise e
+            raise
 
 
 def serve_pelican(cmdLineArgs, dtPelPath):
