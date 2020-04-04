@@ -234,10 +234,10 @@ def create_cmd_line_parser():
         name = SubCmd.CLEAN, help = "Remove existing HTML and CSS files"
     )
 
-    parserServe = subparsers.add_parser(
+    parserServePel = subparsers.add_parser(
         name = SubCmd.SERVE_PELICAN, help = "Serve site locally using Pelican"
     )
-    parserServe.add_argument(
+    parserServePel.add_argument(
         "-p", "--port",
         dest = ArgName.PORT, type = int, default = 8000
     )
