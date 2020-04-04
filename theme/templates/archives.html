@@ -1,11 +1,15 @@
 {% extends "base.html" %}
+
+{% import "misc_macros.html" as misc with context %}
+{% block title %}{{ misc.title_fmt("Post archive") }}{% endblock %}
+
 {% block content %}
-<h1>Archives for {{ SITENAME }}</h1>
+<h1>Post archive</h1>
 
 <dl>
-{% for article in dates %}
-    <dt>{{ article.locale_date }}</dt>
-    <dd><a href="{{ SITEURL }}/{{ article.url }}">{{ article.title }}</a></dd>
-{% endfor %}
+  {% for article in dates %}
+  <dt>{{ article.locale_date }}</dt>
+  <dd><a href="{{ SITEURL }}/{{ article.url }}">{{ article.title }}</a></dd>
+  {% endfor %}
 </dl>
 {% endblock %}

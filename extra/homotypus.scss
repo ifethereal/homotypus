@@ -580,7 +580,7 @@ footer {
   margin-bottom: 1rem;
   &-grid {
     display: grid;
-    grid-template-columns: repeat(2, min-content max-content);
+    grid-template-columns: repeat(2, 1.2em max-content);
     align-items: baseline;
     column-gap: 0.1em;
   }

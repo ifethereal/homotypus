@@ -1,10 +1,16 @@
 {% extends "base.html" %}
 
-{% block title %}{{ SITENAME }} - Tags{% endblock %}
+{% import "misc_macros.html" as misc with context %}
+{% block title %}{{ misc.title_fmt("Tags") }}{% endblock %}
 
 {% block content %}
-    <h1>Tags for {{ SITENAME }}</h1>
-    {%- for tag, articles in tags|sort %}
-        <li><a href="{{ SITEURL }}/{{ tag.url }}">{{ tag }}</a> ({{ articles|count }})</li>
-    {% endfor %}
+<h1>Tags</h1>
+{% if tags %}
+
+<ul>
+  {% for tag, articles in tags|sort %}
+  <li><a href="{{ SITEURL }}/{{ tag.url }}">{{ tag }}</a> ({{ articles|count }})</li>
+  {% endfor %}
+</ul>
+{% endif %}
 {% endblock %}

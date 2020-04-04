@@ -1,13 +1,13 @@
-{% macro date(article) -%}
+{% macro date(article) %}
 <span class="post-info-icon">
   <svg class="icon icon-calendar">
     <use xlink:href="{{ SITEURL }}/{{ ICONS_SVG_PATH }}#icon-calendar"></use>
   </svg>
 </span>
 <span class="post-info-data post-date" title="{{ article.date.isoformat() }}">{{ article.locale_date }}</span>
-{%- endmacro %}
+{% endmacro %}
 
-{% macro authors_or_empty(article) -%}
+{% macro authors_or_empty(article) %}
 {% if article.authors %}
 <span class="post-info-icon">
   <svg class="icon icon-user">
@@ -20,9 +20,9 @@
   {% endfor %}
 </span>
 {% endif %}
-{%- endmacro %}
+{% endmacro %}
 
-{% macro category_or_empty(article) -%}
+{% macro category_or_empty(article) %}
 {% if article.category %}
 <span class="post-info-icon">
   <svg class="icon icon-folder-open">
@@ -33,9 +33,9 @@
   <a href="{{ SITEURL }}/{{ article.category.url }}">{{ article.category }}</a>
 </span>
 {% endif %}
-{%- endmacro %}
+{% endmacro %}
 
-{% macro tags_or_empty(article) -%}
+{% macro tags_or_empty(article) %}
 {% if article.tags %}
 <span class="post-info-icon">
   <svg class="icon icon-tags">
@@ -48,4 +48,4 @@
   {% endfor %}
 </span>
 {% endif %}
-{%- endmacro %}
+{% endmacro %}

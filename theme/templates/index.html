@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% block content %}
 <div class="content-title">
 {% block content_title %}
@@ -13,8 +14,10 @@
       <a href="{{ SITEURL }}/{{ article.url }}" rel="bookmark" title="Permalink to {{ article.title|striptags }}">{{ article.title }}</a>
     </h1>
     <div class="post-info post-info-grid">
-      {{ info.date(article) }}
-      {{ info.authors_or_empty(article) }}
+      {% filter indent(width=6, first=True) %}
+      {{- info.date(article) }}
+      {{- info.authors_or_empty(article) }}
+      {%- endfilter %}
     </div>
 
     {{ article.summary }}

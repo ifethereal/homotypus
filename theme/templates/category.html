@@ -1,5 +1,8 @@
 {% extends "index.html" %}
-{% block content_title %}
-<h2>{{ category }} category</h2>
-{% endblock %}
 
+{% import "misc_macros.html" as misc with context %}
+{% block title %}{{ misc.title_fmt(category) }}{% endblock %}
+
+{% block content_title %}
+<h2>Category: {{ category }}</h2>
+{% endblock %}

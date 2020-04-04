@@ -1,0 +1,8 @@
+{% extends "index.html" %}
+
+{% import "misc_macros.html" as misc with context %}
+{% block title %}{{ misc.title_fmt("Posts tagged \"{}\"".format(tag)) }}{% endblock %}
+
+{% block content_title %}
+<h2>Posts tagged "{{ tag }}"</h2>
+{% endblock %}
