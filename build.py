@@ -438,6 +438,7 @@ def main():
     subcmd = getattr(args, SubCmd._SUBCMD)
     archivist.info("Running in \"%s\" mode", subcmd)
 
+    # Decide dependencies
     flagNeedPel = subcmd in [SubCmd.HTML, SubCmd.SITE, SubCmd.SERVE]
     flagNeedPelOut = subcmd in [SubCmd.SERVE]
     flagNeedSass = subcmd in [SubCmd.CSS, SubCmd.SITE]
@@ -447,6 +448,7 @@ def main():
 
     flagNeedExt = any([flagNeedPel, flagNeedSass])
 
+    # Validate existing resources depending on required dependencies
     try:
         if flagNeedPel:
             assert check_valid_pel_dir_structure(wantOut = flagNeedPelOut)
@@ -470,6 +472,7 @@ def main():
         dtSassPath = build_sass_paths()
         dump_path_diagnostic(dtSassPath, "Sass arguments")
 
+    # Execute commands
     try:
         if subcmd == SubCmd.HTML:
             build_html(dtPelPath)
