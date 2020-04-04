@@ -437,6 +437,7 @@ def main():
 
     subcmd = getattr(args, SubCmd._SUBCMD)
     archivist.info("Running in \"%s\" mode", subcmd)
+    archivist.info("")
 
     # Decide dependencies
     flagNeedPel = subcmd in [SubCmd.HTML, SubCmd.SITE, SubCmd.SERVE_PELICAN]
@@ -480,6 +481,7 @@ def main():
             build_css(dtSassPath)
         elif subcmd == SubCmd.SITE:
             build_css(dtSassPath)
+            archivist.info("")
             build_html(dtPelPath)
         elif subcmd == SubCmd.CLEAN:
             clean()
