@@ -36,7 +36,7 @@ class SubCmd:
     HTML = "html"
     CSS = "css"
     CLEAN = "clean"
-    SERVE = "serve"
+    SERVE_PELICAN = "serve-pelican"
 
 class PelicanArgLabel:
     INPUT = "Content directory"
@@ -235,7 +235,7 @@ def create_cmd_line_parser():
     )
 
     parserServe = subparsers.add_parser(
-        name = SubCmd.SERVE, help = "Serve Pelican site locally"
+        name = SubCmd.SERVE_PELICAN, help = "Serve site locally using Pelican"
     )
     parserServe.add_argument(
         "-p", "--port",
@@ -374,7 +374,7 @@ def clean():
             raise e
 
 
-def serve(cmdLineArgs, dtPelPath):
+def serve_pelican(cmdLineArgs, dtPelPath):
     # This method won't return until the user stops the server
     archivist = logging.getLogger(LOGGER_NAME)
     archivist.info("Serving Pelican site...")
@@ -439,8 +439,8 @@ def main():
     archivist.info("Running in \"%s\" mode", subcmd)
 
     # Decide dependencies
-    flagNeedPel = subcmd in [SubCmd.HTML, SubCmd.SITE, SubCmd.SERVE]
-    flagNeedPelOut = subcmd in [SubCmd.SERVE]
+    flagNeedPel = subcmd in [SubCmd.HTML, SubCmd.SITE, SubCmd.SERVE_PELICAN]
+    flagNeedPelOut = subcmd in [SubCmd.SERVE_PELICAN]
     flagNeedSass = subcmd in [SubCmd.CSS, SubCmd.SITE]
 
     # Cannot want the output from Pelican without wanting Pelican
@@ -483,8 +483,8 @@ def main():
             build_html(dtPelPath)
         elif subcmd == SubCmd.CLEAN:
             clean()
-        elif subcmd == SubCmd.SERVE:
-            serve(args, dtPelPath)
+        elif subcmd == SubCmd.SERVE_PELICAN:
+            serve_pelican(args, dtPelPath)
     except:
         destroy_logger()
         return 1
