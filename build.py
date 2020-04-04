@@ -270,7 +270,8 @@ def create_cmd_line_parser():
     )
     parser.add_argument(
         "--debug",
-        dest = ArgName.DEBUG, action = "store_true"
+        dest = ArgName.DEBUG, action = "store_true",
+        help = "Specify this to see more diagnostic output"
     )
 
     subparsers = parser.add_subparsers(
@@ -299,7 +300,8 @@ def create_cmd_line_parser():
     )
     parserServe.add_argument(
         "-p", "--port",
-        dest = ArgName.PORT, type = int, default = DEFAULT_PORT
+        dest = ArgName.PORT, type = int, default = DEFAULT_PORT,
+        help = "Port at which to serve the site"
     )
 
     parserServePel = subparsers.add_parser(
@@ -307,7 +309,8 @@ def create_cmd_line_parser():
     )
     parserServePel.add_argument(
         "-p", "--port",
-        dest = ArgName.PORT, type = int, default = DEFAULT_PORT
+        dest = ArgName.PORT, type = int, default = DEFAULT_PORT,
+        help = "Port at which to serve the site"
     )
 
     return parser
