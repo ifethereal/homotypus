@@ -469,7 +469,11 @@ def serve_pelican(cmdLineArgs, dtPelPath):
     archivist.debug("Executed the following command as PID %d:", proc.pid)
     archivist.debug("    %r", args)
 
+    import webbrowser
+    strUrl = "http://localhost:{}/".format(str(port))
+    webbrowser.open_new_tab(strUrl)
     proc.wait()
+    archivist.info("Server stopped")
 
 
 def serve_python(cmdLineArgs, dtPelOutPath):
@@ -489,7 +493,11 @@ def serve_python(cmdLineArgs, dtPelOutPath):
     archivist.debug("Executed the following command as PID %d:", proc.pid)
     archivist.debug("    %r", args)
 
+    import webbrowser
+    strUrl = "http://localhost:{}/".format(str(port))
+    webbrowser.open_new_tab(strUrl)
     proc.wait()
+    archivist.info("Server stopped")
 
 
 def dump_path_diagnostic(dtPath, strHead = None):
