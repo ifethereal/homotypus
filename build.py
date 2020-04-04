@@ -202,30 +202,60 @@ def get_sass_cmd():
         raise NotImplementedError
 
 
-def build_sass_paths(dpCur = os.getcwd()):
-    fpIn = op.abspath(op.join(dpCur, get_sass_input_file()))
-    fpOut = op.abspath(op.join(dpCur, get_sass_output_file()))
+def build_sass_paths(dpCur = os.getcwd(), wantIn = True, wantOut = True):
+    result = {}
 
-    result = {SassArgLabel.INPUT: fpIn, SassArgLabel.OUTPUT: fpOut}
+    if wantIn:
+        fpIn = op.abspath(op.join(dpCur, get_sass_input_file()))
+        result[SassArgLabel.INPUT] = fpIn
+
+    if wantOut:
+        fpOut = op.abspath(op.join(dpCur, get_sass_output_file()))
+        result[SassArgLabel.OUTPUT] = fpOut
 
     return result
 
 
-def check_valid_sass_file_structure(dpCur = os.getcwd()):
+def check_valid_sass_file_structure(
+    dpCur = os.getcwd(), wantIn = True, wantOut = False
+):
+    lstPassCheck = []
+    lstFailMsg = []
+
     if not op.isdir(dpCur):
         raise ValueError("No such directory [{}] exists".format(dpCur))
 
     p = build_sass_paths(dpCur)
 
     archivist = logging.getLogger(LOGGER_NAME)
-    fpIn = p[SassArgLabel.INPUT]
-    if not op.isfile(fpIn):
-        archivist.error(
-            "The expected Sass source file [%s] does not exist", fpIn
-        )
-        return False
+    if not wantIn and not wantOut:
+        archivist.debug("No Sass paths being checked")
 
-    return True
+    if wantIn:
+        fpIn = p[SassArgLabel.INPUT]
+        lstPassCheck.append(op.isfile(fpIn))
+        lstFailMsg.append(
+            "The expected Sass source file [{}] does not exist".format(fpIn)
+        )
+
+    if wantOut:
+        fpOut = p[SassArgLabel.OUTPUT]
+        lstPassCheck.append(op.isfile(fpOut))
+        lstFailMsg.append([
+            "The Sass output file [{}] does not exist".format(fpOut),
+            "Make sure Sass has been used to generate the CSS file"
+        ])
+
+    for (m, passed) in zip(lstFailMsg, lstPassCheck):
+        if not passed:
+            if isinstance(m, list):
+                lstMsg = m
+            else:
+                lstMsg = [m]
+            for msg in lstMsg:
+                archivist.error(msg)
+
+    return all(lstPassCheck)
 
 
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -515,12 +545,18 @@ def main():
     # Do Sass input files need to exist?
     flagNeedSassIn = subcmd in [SubCmd.CSS, SubCmd.SITE]
 
+    # Does Sass need to be executed?
+    flagNeedSassUse = flagNeedSassIn
+
+    # Do Sass output files need to exist?
+    flagNeedSassOut = subcmd in [SubCmd.HTML]
+
+    # Do Sass output destinations need to be specified?
+    flagNeedSassOutSpec = subcmd in [SubCmd.CSS, SubCmd.SITE]
+
     # Sass creates any necessary directories needed for writing to the
     # destination, so no need to check if the parent directory of the
     # destination file exists
-
-    # Does Sass need to be executed?
-    flagNeedSassUse = flagNeedSassIn
 
     try:
         # Validate existing resources depending on required dependencies
@@ -529,7 +565,9 @@ def main():
         )
         assert not flagNeedPelUse or check_valid_ext(get_pel_cmd(), "Pelican")
 
-        assert not flagNeedSassIn or check_valid_sass_file_structure()
+        assert check_valid_sass_file_structure(
+            wantIn = flagNeedSassIn, wantOut = flagNeedSassOut
+        )
         assert not flagNeedSassUse or check_valid_ext(get_sass_cmd(), "Sass")
 
         if flagNeedPelUse or flagNeedSassUse:
@@ -544,8 +582,10 @@ def main():
         )
         dump_path_diagnostic(dtPelPath, "Pelican arguments")
 
-    if flagNeedSassIn:
-        dtSassPath = build_sass_paths()
+    if flagNeedSassIn or flagNeedSassOutSpec:
+        dtSassPath = build_sass_paths(
+            wantIn = flagNeedSassIn, wantOut = flagNeedSassOutSpec
+        )
         dump_path_diagnostic(dtSassPath, "Sass arguments")
 
     try:
