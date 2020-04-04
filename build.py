@@ -23,7 +23,6 @@ import subprocess as sp
 # CONSTANTS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PROJECT_NAME = "Homotypus"
 LOGGER_NAME = "Bob"
-FP_PELICAN_SETUP = "settings.py"
 
 class ArgName:
     DEBUG = "debug"
@@ -37,6 +36,7 @@ class SubCmd:
     CSS = "css"
     CLEAN = "clean"
     SERVE_PELICAN = "serve-pelican"
+    SERVE_PYTHON = "serve"
 
 class PelicanArgLabel:
     INPUT = "Content directory"
@@ -94,42 +94,70 @@ def get_pel_cmd():
     return "pelican"
 
 
-def build_pelican_paths(dpCur = os.getcwd()):
+def build_pelican_input_paths(dpCur = os.getcwd()):
+    FP_PELICAN_SETUP = "settings.py"
     fpSettings = op.abspath(op.join(dpCur, FP_PELICAN_SETUP))
     dpIn = op.abspath(op.join(dpCur, get_pel_input_dir()))
-    dpOut = op.abspath(op.join(dpCur, get_pel_output_dir()))
 
     result = {
         PelicanArgLabel.INPUT: dpIn,
-        PelicanArgLabel.OUTPUT: dpOut,
         PelicanArgLabel.SETTINGS: fpSettings
     }
 
     return result
 
 
-def check_valid_pel_dir_structure(dpCur = os.getcwd(), wantOut = False):
+def build_pelican_output_paths(dpCur = os.getcwd()):
+    dpOut = op.abspath(op.join(dpCur, get_pel_output_dir()))
+
+    result = {PelicanArgLabel.OUTPUT: dpOut}
+
+    return result
+
+
+def build_pelican_paths(dpCur = os.getcwd(), wantIn = True, wantOut = True):
+    result = {}
+
+    if wantIn:
+        dtPelInPath = build_pelican_input_paths()
+        result.update(dtPelInPath)
+
+    if wantOut:
+        dtPelOutPath = build_pelican_output_paths()
+        result.update(dtPelOutPath)
+
+    return result
+
+
+def check_valid_pel_dir_structure(
+    dpCur = os.getcwd(), wantIn = True, wantOut = False
+):
     lstPassCheck = []
     lstFailMsg = []
 
     if not op.isdir(dpCur):
         raise ValueError("No such directory [{}] exists".format(dpCur))
 
-    p = build_pelican_paths(dpCur)
+    p = build_pelican_paths(dpCur, wantIn, wantOut)
 
-    fpSettings = p[PelicanArgLabel.SETTINGS]
-    lstPassCheck.append(op.isfile(fpSettings))
-    lstFailMsg.append(
-        "The expected Pelican settings file [{}] does not exist" \
-        .format(fpSettings)
-    )
+    archivist = logging.getLogger(LOGGER_NAME)
+    if not wantIn and not wantOut:
+        archivist.debug("No Pelican paths being checked")
 
-    dpIn = p[PelicanArgLabel.INPUT]
-    lstPassCheck.append(op.isdir(dpIn))
-    lstFailMsg.append(
-        "The expected Pelican content directory [{}] does not exist" \
-        .format(dpIn)
-    )
+    if wantIn:
+        fpSettings = p[PelicanArgLabel.SETTINGS]
+        lstPassCheck.append(op.isfile(fpSettings))
+        lstFailMsg.append(
+            "The expected Pelican settings file [{}] does not exist" \
+            .format(fpSettings)
+        )
+
+        dpIn = p[PelicanArgLabel.INPUT]
+        lstPassCheck.append(op.isdir(dpIn))
+        lstFailMsg.append(
+            "The expected Pelican content directory [{}] does not exist" \
+            .format(dpIn)
+        )
 
     if wantOut:
         dpOut = p[PelicanArgLabel.OUTPUT]
@@ -139,7 +167,6 @@ def check_valid_pel_dir_structure(dpCur = os.getcwd(), wantOut = False):
             "Make sure Pelican has been used to generate the site"
         ])
 
-    archivist = logging.getLogger(LOGGER_NAME)
     for (m, passed) in zip(lstFailMsg, lstPassCheck):
         if not passed:
             if isinstance(m, list):
@@ -234,12 +261,23 @@ def create_cmd_line_parser():
         name = SubCmd.CLEAN, help = "Remove existing HTML and CSS files"
     )
 
+    DEFAULT_PORT = 8000
+
+    parserServe = subparsers.add_parser(
+        name = SubCmd.SERVE_PYTHON,
+        help = "Serve site locally with Python [3.x]"
+    )
+    parserServe.add_argument(
+        "-p", "--port",
+        dest = ArgName.PORT, type = int, default = DEFAULT_PORT
+    )
+
     parserServePel = subparsers.add_parser(
         name = SubCmd.SERVE_PELICAN, help = "Serve site locally using Pelican"
     )
     parserServePel.add_argument(
         "-p", "--port",
-        dest = ArgName.PORT, type = int, default = 8000
+        dest = ArgName.PORT, type = int, default = DEFAULT_PORT
     )
 
     return parser
@@ -350,7 +388,7 @@ def clean():
         archivist.info("The following will be removed:")
         for (desc, flagRm) in zip(lstDesc, lstFlagRm):
             if flagRm:
-                archivist.info("    " + desc)
+                archivist.info("    %s", desc)
 
         archivist.info("")
     else:
@@ -377,7 +415,7 @@ def clean():
 def serve_pelican(cmdLineArgs, dtPelPath):
     # This method won't return until the user stops the server
     archivist = logging.getLogger(LOGGER_NAME)
-    archivist.info("Serving Pelican site...")
+    archivist.info("Serving Pelican site using Pelican...")
 
     fpSettings = dtPelPath[PelicanArgLabel.SETTINGS]
     dpIn = dtPelPath[PelicanArgLabel.INPUT]
@@ -396,10 +434,31 @@ def serve_pelican(cmdLineArgs, dtPelPath):
     if flagDebug:
         args.append("--debug")
 
-    archivist.debug("About to execute the following command:")
+    # Let the server communicate in a separate console window
+    proc = sp.Popen(args, creationflags = sp.CREATE_NEW_CONSOLE)
+    archivist.debug("Executed the following command as PID %d:", proc.pid)
     archivist.debug("    %r", args)
 
+    proc.wait()
+
+
+def serve_python(cmdLineArgs, dtPelOutPath):
+    archivist = logging.getLogger(LOGGER_NAME)
+    archivist.info("Serving Pelican site using Python...")
+
+    dpOut = dtPelOutPath[PelicanArgLabel.OUTPUT]
+
+    port = getattr(cmdLineArgs, ArgName.PORT)
+    args = [
+        "python", "-m", "http.server", str(port), "--bind", "localhost",
+        "--directory", dpOut
+    ]
+
+    # Let the server communicate in a separate console window
     proc = sp.Popen(args, creationflags = sp.CREATE_NEW_CONSOLE)
+    archivist.debug("Executed the following command as PID %d:", proc.pid)
+    archivist.debug("    %r", args)
+
     proc.wait()
 
 
@@ -440,41 +499,57 @@ def main():
     archivist.info("")
 
     # Decide dependencies
-    flagNeedPel = subcmd in [SubCmd.HTML, SubCmd.SITE, SubCmd.SERVE_PELICAN]
-    flagNeedPelOut = subcmd in [SubCmd.SERVE_PELICAN]
-    flagNeedSass = subcmd in [SubCmd.CSS, SubCmd.SITE]
 
-    # Cannot want the output from Pelican without wanting Pelican
-    assert flagNeedPel or not flagNeedPelOut
+    # Do Pelican input files need to exist?
+    flagNeedPelIn = subcmd in [SubCmd.HTML, SubCmd.SITE, SubCmd.SERVE_PELICAN]
 
-    flagNeedExt = any([flagNeedPel, flagNeedSass])
+    # Does Pelican need to be executed?
+    flagNeedPelUse = flagNeedPelIn
 
-    # Validate existing resources depending on required dependencies
+    # Do Pelican output files need to exist?
+    flagNeedPelOut = subcmd in [SubCmd.SERVE_PELICAN, SubCmd.SERVE_PYTHON]
+
+    # Do Pelican output destinations need to be specified?
+    flagNeedPelOutSpec = flagNeedPelOut or subcmd in [SubCmd.HTML, SubCmd.SITE]
+
+    # Do Sass input files need to exist?
+    flagNeedSassIn = subcmd in [SubCmd.CSS, SubCmd.SITE]
+
+    # Sass creates any necessary directories needed for writing to the
+    # destination, so no need to check if the parent directory of the
+    # destination file exists
+
+    # Does Sass need to be executed?
+    flagNeedSassUse = flagNeedSassIn
+
     try:
-        if flagNeedPel:
-            assert check_valid_pel_dir_structure(wantOut = flagNeedPelOut)
-            assert check_valid_ext(get_pel_cmd(), "Pelican")
+        # Validate existing resources depending on required dependencies
+        assert check_valid_pel_dir_structure(
+            wantIn = flagNeedPelIn, wantOut = flagNeedPelOut
+        )
+        assert not flagNeedPelUse or check_valid_ext(get_pel_cmd(), "Pelican")
 
-        if flagNeedSass:
-            assert check_valid_sass_file_structure()
-            assert check_valid_ext(get_sass_cmd(), "Sass")
+        assert not flagNeedSassIn or check_valid_sass_file_structure()
+        assert not flagNeedSassUse or check_valid_ext(get_sass_cmd(), "Sass")
+
+        if flagNeedPelUse or flagNeedSassUse:
+            archivist.info("")
     except AssertionError:
         destroy_logger()
-        return 1
+        raise
 
-    if flagNeedExt:
-        archivist.info("")
-
-    if flagNeedPel:
-        dtPelPath = build_pelican_paths()
+    if flagNeedPelIn or flagNeedPelOutSpec:
+        dtPelPath = build_pelican_paths(
+            wantIn = flagNeedPelIn, wantOut = flagNeedPelOutSpec
+        )
         dump_path_diagnostic(dtPelPath, "Pelican arguments")
 
-    if flagNeedSass:
+    if flagNeedSassIn:
         dtSassPath = build_sass_paths()
         dump_path_diagnostic(dtSassPath, "Sass arguments")
 
-    # Execute commands
     try:
+        # Execute commands
         if subcmd == SubCmd.HTML:
             build_html(dtPelPath)
         elif subcmd == SubCmd.CSS:
@@ -487,9 +562,12 @@ def main():
             clean()
         elif subcmd == SubCmd.SERVE_PELICAN:
             serve_pelican(args, dtPelPath)
+        elif subcmd == SubCmd.SERVE_PYTHON:
+            serve_python(args, dtPelPath)
     except:
+        archivist.error("Could not finish successfully")
         destroy_logger()
-        return 1
+        raise
 
     archivist.info("")
     archivist.info("Finished")
