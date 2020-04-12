@@ -31,6 +31,16 @@ EXTRA_PATH_METADATA = {
 # Mathematical notation rendering
 PLUGINS = ["pelican_katex"]
 KATEX_PATH = "katex" # Use the npm KaTeX installation
+KATEX_PREAMBLE = r"""
+% Slanted inequality signs
+\renewcommand{\geq}{\geqslant}
+\renewcommand{\leq}{\leqslant}
+\renewcommand{\ge}{\geqslant}
+\renewcommand{\le}{\leqslant}
+
+\newcommand{\mfs}{\mathrlap{.}} % Full stop at the end of a line in maths
+\newcommand{\mcm}{\mathrlap{,}} % Comma at the end of a line in maths
+"""
 
 # Locale information
 DEFAULT_LANG = u'en'
