@@ -28,6 +28,10 @@ EXTRA_PATH_METADATA = {
     '../extra/symbols.css': {'path': 'theme/css/symbols.css'},
 }
 
+# Mathematical notation rendering
+PLUGINS = ["pelican_katex"]
+KATEX_PATH = "katex" # Use the npm KaTeX installation
+
 # Locale information
 DEFAULT_LANG = u'en'
 TIMEZONE = 'Australia/Sydney'

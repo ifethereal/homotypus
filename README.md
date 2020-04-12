@@ -8,7 +8,10 @@ This repository contains the source code for the Homotypus blog.
   [spec file][pip] for details)
   * Pelican 4.2.0
   * Markdown 3.1.1
+  * [`pelican-katex`][pelican-katex] 1.6.1
 * [Sass][sass] (Dart Sass 1.25.0 works)
+* [Node][node]
+* [KaTeX][katex] installed using `npm`
 
 The setup could be done as follows:
 1. Install Miniconda.
@@ -23,6 +26,8 @@ The setup could be done as follows:
    This creates a conda environment `homotypus` with the right packages
    installed.
 5. Install Sass.
+6. Install Node.
+7. Install KaTeX by running `npm install katex`.
 
 [miniconda]: https://docs.conda.io/en/latest/miniconda.html
     "Download page for Miniconda"
@@ -30,6 +35,12 @@ The setup could be done as follows:
 [pip]: spec/pip.txt
 [sass]: https://sass-lang.com/install
     "Download page for Sass"
+[node]: https://nodejs.org/
+    "Download page for Node"
+[katex]: https://katex.org/docs/node.html
+    "Installation instructions for KaTeX"
+[pelican-katex]: https://github.com/cqql/pelican-katex
+    "Home page for pelican-katex"
 
 ## Instructions
 Once the conda environment is set up and activated, navigate to the root of the
