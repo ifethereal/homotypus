@@ -22,7 +22,6 @@ import subprocess as sp
 
 # CONSTANTS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PROJECT_NAME = "Homotypus"
-LOGGER_NAME = "Bob"
 
 class ArgName:
     DEBUG = "debug"
@@ -47,17 +46,21 @@ class SassArgLabel:
     INPUT = "Input source file"
     OUTPUT = "Output file"
 
+class LogName:
+    SCRIPT_LOGGER = "Bob"
+    CONSOLE_HANDLER = "console"
+
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 # LOGGER SUPPORT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-def create_logger(name = LOGGER_NAME, level = logging.INFO):
+def create_logger(name = LogName.SCRIPT_LOGGER):
     archivist = logging.getLogger(name)
     archivist.setLevel(logging.DEBUG)
 
     # Set up logging to terminal
     terminal = logging.StreamHandler(sys.stdout)
-    terminal.setLevel(level)
+    terminal.setLevel(logging.INFO)
     archivist.addHandler(terminal)
 
     # Want the timestamp to be formatted like 'Thu 28 Mar 2019 13:23:28'
@@ -66,11 +69,12 @@ def create_logger(name = LOGGER_NAME, level = logging.INFO):
         "%(asctime)s [%(levelname)8s] %(message)s", strDateFmt
     )
     terminal.setFormatter(formatter)
+    terminal.set_name(LogName.CONSOLE_HANDLER)
 
     return archivist
 
 
-def destroy_logger(name = LOGGER_NAME):
+def destroy_logger(name = LogName.SCRIPT_LOGGER):
     archivist = logging.getLogger(name)
     for handler in archivist.handlers:
         handler.flush()
@@ -140,7 +144,7 @@ def check_valid_pel_dir_structure(
 
     p = build_pelican_paths(dpCur, wantIn, wantOut)
 
-    archivist = logging.getLogger(LOGGER_NAME)
+    archivist = logging.getLogger(LogName.SCRIPT_LOGGER)
     if not wantIn and not wantOut:
         archivist.debug("No Pelican paths being checked")
 
@@ -227,7 +231,7 @@ def check_valid_sass_file_structure(
 
     p = build_sass_paths(dpCur)
 
-    archivist = logging.getLogger(LOGGER_NAME)
+    archivist = logging.getLogger(LogName.SCRIPT_LOGGER)
     if not wantIn and not wantOut:
         archivist.debug("No Sass paths being checked")
 
@@ -325,7 +329,7 @@ def check_valid_ext(lstCmd, strLabel):
     if not isinstance(lstCmd, list):
         return check_valid_ext([lstCmd], strLabel)
 
-    archivist = logging.getLogger(LOGGER_NAME)
+    archivist = logging.getLogger(LogName.SCRIPT_LOGGER)
 
     try:
         # Attempt to get the installed version number
@@ -341,7 +345,7 @@ def check_valid_ext(lstCmd, strLabel):
 
 
 def build_html(dtPelPath):
-    archivist = logging.getLogger(LOGGER_NAME)
+    archivist = logging.getLogger(LogName.SCRIPT_LOGGER)
     archivist.info("Generating HTML using Pelican into output directory")
 
     fpSettings = dtPelPath[PelicanArgLabel.SETTINGS]
@@ -371,7 +375,7 @@ def build_html(dtPelPath):
 
 
 def build_css(dtSassPath):
-    archivist = logging.getLogger(LOGGER_NAME)
+    archivist = logging.getLogger(LogName.SCRIPT_LOGGER)
     archivist.info("Generating CSS files using Sass")
 
     fpIn = dtSassPath[SassArgLabel.INPUT]
@@ -403,7 +407,7 @@ def build_css(dtSassPath):
 
 
 def clean():
-    archivist = logging.getLogger(LOGGER_NAME)
+    archivist = logging.getLogger(LogName.SCRIPT_LOGGER)
 
     dpPelOut = get_pel_output_dir()
     flagRmPel = op.isdir(dpPelOut)
@@ -447,7 +451,7 @@ def clean():
 
 def serve_pelican(cmdLineArgs, dtPelPath):
     # This method won't return until the user stops the server
-    archivist = logging.getLogger(LOGGER_NAME)
+    archivist = logging.getLogger(LogName.SCRIPT_LOGGER)
     archivist.info("Serving Pelican site using Pelican...")
 
     fpSettings = dtPelPath[PelicanArgLabel.SETTINGS]
@@ -480,7 +484,7 @@ def serve_pelican(cmdLineArgs, dtPelPath):
 
 
 def serve_python(cmdLineArgs, dtPelOutPath):
-    archivist = logging.getLogger(LOGGER_NAME)
+    archivist = logging.getLogger(LogName.SCRIPT_LOGGER)
     archivist.info("Serving Pelican site using Python...")
 
     dpOut = dtPelOutPath[PelicanArgLabel.OUTPUT]
@@ -508,7 +512,7 @@ def dump_path_diagnostic(dtPath, strHead = None):
     for (k, v) in dtPath.items():
         labelColWidth = max(labelColWidth, len(k))
 
-    archivist = logging.getLogger(LOGGER_NAME)
+    archivist = logging.getLogger(LogName.SCRIPT_LOGGER)
 
     NUM_CHAR_HEADER = 80
 
@@ -530,10 +534,15 @@ def main():
     parser = create_cmd_line_parser()
     args = parser.parse_args()
 
-    flagDebug = getattr(args, ArgName.DEBUG)
-    terminalLogLevel = logging.DEBUG if flagDebug else logging.INFO
+    archivist = create_logger()
 
-    archivist = create_logger(level = terminalLogLevel)
+    flagDebug = getattr(args, ArgName.DEBUG)
+    if flagDebug:
+        for h in archivist.handlers:
+            if h.get_name() != LogName.CONSOLE_HANDLER:
+                continue
+            h.setLevel(logging.DEBUG)
+            break
 
     subcmd = getattr(args, SubCmd._SUBCMD)
     archivist.info("Running in \"%s\" mode", subcmd)
