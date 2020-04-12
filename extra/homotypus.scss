@@ -350,6 +350,7 @@ abbr {
   &[title] {
     cursor: help;
     border-bottom: 1px dotted var(--fg-mute08);
+    text-decoration: none;
   }
 }
 

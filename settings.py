@@ -37,6 +37,9 @@ MARKDOWN = {
         },
         'markdown.extensions.extra': {},
         'markdown.extensions.meta': {},
+        'markdown.extensions.smarty': {'smart_quotes': False},
+        'markdown.extensions.footnotes': {},
+        'markdown.extensions.abbr': {},
     },
     'output_format': 'html5',
 }
