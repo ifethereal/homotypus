@@ -31,9 +31,10 @@ thanks to the author of the original version of this document on
     *   Emphasis
     *   Code
     *   Images
-*   Miscellaneous
-    *   Backslash Escapes
-    *   Automatic Links
+*   Extras
+    *   Smart dashes
+    *   Footnotes
+    *   Abbreviations
 
 ----
 
@@ -243,7 +244,6 @@ to be indented *twice* -- 8 spaces or two tabs:
 
 *   A list item with a code block:
 
-        :::text
         <code goes here>
 
 ### Code Blocks
@@ -258,7 +258,6 @@ block by at least 4 spaces or 1 tab.
 
 This is a normal paragraph:
 
-    :::text
     This is a code block.
 
 Here is an example of AppleScript:
@@ -330,3 +329,50 @@ Unlike a pre-formatted code block, a code span indicates code within a
 normal paragraph. For example:
 
 Use the `printf()` function.
+
+## Extras
+
+### Smart dashes
+
+By using [Python-Markdown][py-md] extensions, en dashes and em dashes can be
+produced using Markdown.
+
+En dashes (--) will replace two dashes in a row (`--`).
+
+Em dashes (---) will replace three dashes in a row (`---`).
+
+The extension can handle turning "straight quotes" into "curly quotes" too, but
+this has been disabled.
+
+### Footnotes
+
+Footnotes[^1] have a label[^@#$%] and the footnote's content.
+
+[^1]: This is a footnote content.
+[^@#$%]: A footnote on the label: "@#$%".
+
+The above is produced by the following:
+
+    :::md
+    Footnotes[^1] have a label[^@#$%] and the footnote's content.
+
+    [^1]: This is a footnote content.
+    [^@#$%]: A footnote on the label: "@#$%".
+
+The placement of footnote contents will be at the bottom of the rendered HTML
+code, unless the following Markdown code is placed somewhere:
+
+    / / /Footnotes Go Here/ / /
+
+Ignore the spaces separating the slashes (`/`).
+
+### Abbreviations
+
+Markdown code is rendered to HTML.
+
+*[HTML]: Hyper Text Markup Language
+
+    :::md
+    Markdown code is rendered to HTML.
+
+    *[HTML]: Hyper Text Markup Language
