@@ -31,9 +31,6 @@ thanks to the author of the original version of this document on
     *   Emphasis
     *   Code
     *   Images
-*   Miscellaneous
-    *   Backslash Escapes
-    *   Automatic Links
 
 ----
 
@@ -243,7 +240,6 @@ to be indented *twice* -- 8 spaces or two tabs:
 
 *   A list item with a code block:
 
-        :::text
         <code goes here>
 
 ### Code Blocks
@@ -258,7 +254,6 @@ block by at least 4 spaces or 1 tab.
 
 This is a normal paragraph:
 
-    :::text
     This is a code block.
 
 Here is an example of AppleScript:
