@@ -344,7 +344,7 @@ def check_valid_ext(lstCmd, strLabel):
         return False
 
 
-def build_html(dtPelPath):
+def build_html(cmdLineArgs, dtPelPath):
     archivist = logging.getLogger(LogName.SCRIPT_LOGGER)
     archivist.info("Generating HTML using Pelican into output directory")
 
@@ -356,6 +356,8 @@ def build_html(dtPelPath):
     if not isinstance(cmdPel, list):
         cmdPel = [cmdPel]
     args = cmdPel + [dpIn, "--output", dpOut, "--settings", fpSettings]
+    if getattr(cmdLineArgs, ArgName.DEBUG):
+        args.append("--debug")
     proc = sp.Popen(
         args, stdout = sp.PIPE, stderr = sp.STDOUT, universal_newlines = True
     )
@@ -374,7 +376,7 @@ def build_html(dtPelPath):
         raise Exception(strErrMsg)
 
 
-def build_css(dtSassPath):
+def build_css(cmdLineArgs, dtSassPath):
     archivist = logging.getLogger(LogName.SCRIPT_LOGGER)
     archivist.info("Generating CSS files using Sass")
 
@@ -406,7 +408,7 @@ def build_css(dtSassPath):
         raise Exception(strErrMsg)
 
 
-def clean():
+def clean(cmdLineArgs):
     archivist = logging.getLogger(LogName.SCRIPT_LOGGER)
 
     dpPelOut = get_pel_output_dir()
@@ -617,15 +619,15 @@ def main():
     try:
         # Execute commands
         if subcmd == SubCmd.HTML:
-            build_html(dtPelPath)
+            build_html(args, dtPelPath)
         elif subcmd == SubCmd.CSS:
-            build_css(dtSassPath)
+            build_css(args, dtSassPath)
         elif subcmd == SubCmd.SITE:
-            build_css(dtSassPath)
+            build_css(args, dtSassPath)
             archivist.info("")
-            build_html(dtPelPath)
+            build_html(args, dtPelPath)
         elif subcmd == SubCmd.CLEAN:
-            clean()
+            clean(args)
         elif subcmd == SubCmd.SERVE_PELICAN:
             serve_pelican(args, dtPelPath)
         elif subcmd == SubCmd.SERVE_PYTHON:
