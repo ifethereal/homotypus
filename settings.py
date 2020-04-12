@@ -28,6 +28,16 @@ EXTRA_PATH_METADATA = {
     '../extra/symbols.css': {'path': 'theme/css/symbols.css'},
 }
 
+# Markdown settings
+MARKDOWN = {
+    'extension_configs': {
+        'markdown.extensions.codehilite': {'css_class': 'highlight'},
+        'markdown.extensions.extra': {},
+        'markdown.extensions.meta': {},
+    },
+    'output_format': 'html5',
+}
+
 # Mathematical notation rendering
 PLUGINS = ["pelican_katex"]
 KATEX_PATH = "katex" # Use the npm KaTeX installation
