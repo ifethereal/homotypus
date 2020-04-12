@@ -44,9 +44,9 @@
       {%- endfilter %}
     </div>
 
-    {% filter indent(width=4, first=True) %}
+    {# Need to avoid any indenting because preformatted Markdown is sensitive
+    to any indenting #}
     {{- article.content }}
-    {% endfilter %}
   </div>
 </div>
 {% endblock %}

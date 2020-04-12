@@ -60,9 +60,9 @@
       </div>
 
       <div class="container content">
-        {% filter indent(width=8, first=True) %}
+        {# Need to avoid any indenting because preformatted Markdown is
+        sensitive to any indenting #}
         {%- block content %}{% endblock %}
-        {% endfilter %}
       </div>
 
       <label for="sidebar-checkbox" class="sidebar-toggle"></label>
