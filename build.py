@@ -356,6 +356,8 @@ def build_html(cmdLineArgs, dtPelPath):
     if not isinstance(cmdPel, list):
         cmdPel = [cmdPel]
     args = cmdPel + [dpIn, "--output", dpOut, "--settings", fpSettings]
+    if getattr(cmdLineArgs, ArgName.DEBUG):
+        args.append("--debug")
     proc = sp.Popen(
         args, stdout = sp.PIPE, stderr = sp.STDOUT, universal_newlines = True
     )
