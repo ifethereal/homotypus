@@ -9,7 +9,7 @@ It is true that $3 \ge 1$.
 
 A function $f\colon\reals\to\reals$ is said to be *slowly varying* if
 $$
-\lim_{t \to \infty} \frac{f(tx)}{f(x)} = 1
+\lim_{t \to \infty} \frac{f(tx)}{f(t)} = 1
 \qquad \forall x \in \reals
 \mfs
 $$
