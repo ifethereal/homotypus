@@ -1,4 +1,4 @@
-Title: KaTeX Test
+Title: KaTeX test
 Date: 2020-04-12T19:15+10:00
 Category: Site testing
 Slug: katex-test
