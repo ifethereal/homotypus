@@ -7,10 +7,12 @@ Tags: diagnostic
 
 It is true that $3 \ge 1$.
 
-A function $f\colon\reals\to\reals$ is said to be *slowly varying* if
+Let $\ell$ be a positive real-valued measurable function defined on
+$[x_0, \infty)$ for some $x_0 \in \reals$. The function $\ell$ is said to be
+*slowly varying* if
 $$
-\lim_{t \to \infty} \frac{f(tx)}{f(t)} = 1
-\qquad \forall x \in \reals
+\lim_{x \to \infty} \frac{\ell(\lambda x)}{\ell(x)} = 1
+\quad \forall \lambda > 0
 \mfs
 $$
 
