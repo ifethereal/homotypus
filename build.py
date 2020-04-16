@@ -369,7 +369,7 @@ def build_html(cmdLineArgs, dtPelPath):
 
     retcode = proc.wait()
     if retcode == 0:
-        archivist.info("Pelican finished successfully")
+        archivist.info("Pelican finished")
     else:
         strErrMsg = "Pelican did not finish successfully"
         archivist.error(strErrMsg)
@@ -401,7 +401,7 @@ def build_css(cmdLineArgs, dtSassPath):
 
     retcode = proc.wait()
     if retcode == 0:
-        archivist.info("Sass finished successfully")
+        archivist.info("Sass finished")
     else:
         strErrMsg = "Sass did not finish successfully"
         archivist.error(strErrMsg)
