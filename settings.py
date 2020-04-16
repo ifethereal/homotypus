@@ -46,7 +46,6 @@ MARKDOWN = {
 
 # Mathematical notation rendering
 PLUGINS = ["pelican_katex"]
-KATEX_PATH = "katex" # Use the npm KaTeX installation
 KATEX_PREAMBLE = r"""
 % Slanted inequality signs
 \renewcommand{\geq}{\geqslant}
